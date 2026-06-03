@@ -211,9 +211,17 @@ function getActualCaloriesPerMuscleLastNDays(days) {
 // Cập nhật tab Vùng cơ với mục tiêu calo theo cân nặng (tỷ lệ mặc định 25% mỗi nhóm)
 function updateMuscleGoalStats() {
     const muscleGroups = ["Chân-Mông", "Core", "Ngực-Vai-Tay", "Lưng trên"];
-    const targetRatio = 0.25; // mỗi nhóm 25% tổng mục tiêu tuần
+    const targetRatios = {
+        "Chân-Mông": 0.35,
+        "Core": 0.25,
+        "Ngực-Vai-Tay": 0.20,
+        "Lưng trên": 0.20
+    };
     const totalWeeklyCalTarget = getRecommendedWeeklyCalories(appData.currentWeight);
-    const targetCalPerGroup = totalWeeklyCalTarget * targetRatio;
+    let targetCalPerGroup = {};
+    for (let mg of muscleGroups) {
+        targetCalPerGroup[mg] = totalWeeklyCalTarget * targetRatios[mg];
+    }
 
     const actualCal = getActualCaloriesPerMuscleLastNDays(7);
 
