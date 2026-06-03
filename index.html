@@ -213,9 +213,9 @@ function updateMuscleGoalStats() {
     const muscleGroups = ["Chân-Mông", "Core", "Ngực-Vai-Tay", "Lưng trên"];
     const targetRatios = {
         "Chân-Mông": 0.35,
-        "Core": 0.25,
+        "Core": 0.20,
         "Ngực-Vai-Tay": 0.20,
-        "Lưng trên": 0.20
+        "Lưng trên": 0.25
     };
     const totalWeeklyCalTarget = getRecommendedWeeklyCalories(appData.currentWeight);
     let targetCalPerGroup = {};
@@ -228,12 +228,13 @@ function updateMuscleGoalStats() {
     let html = "";
     for (let mg of muscleGroups) {
         let achieved = actualCal[mg] || 0;
-        let percent = targetCalPerGroup > 0 ? Math.min(100, Math.round((achieved / targetCalPerGroup) * 100)) : 0;
-        let remaining = Math.max(0, targetCalPerGroup - achieved);
+        let target = targetCalPerGroup[mg];
+        let percent = target > 0 ? Math.min(100, Math.round((achieved / target) * 100)) : 0;
+        let remaining = Math.max(0, target - achieved);
         html += `
             <div class="muscle-card">
                 <strong>${mg}</strong><br>
-                Đã đạt: ${Math.round(achieved)} / ${Math.round(targetCalPerGroup)} kcal<br>
+                Đã đạt: ${Math.round(achieved)} / ${Math.round(target)} kcal<br>
                 <div class="progress-bar">
                     <div class="progress-fill" style="width:${percent}%">${percent}%</div>
                 </div>
@@ -243,8 +244,11 @@ function updateMuscleGoalStats() {
     }
     document.getElementById("muscleStatsContainer").innerHTML = html;
 
-    // Gợi ý nhóm còn thiếu nhiều nhất
-    let deficits = muscleGroups.map(mg => ({ name: mg, remaining: Math.max(0, targetCalPerGroup - (actualCal[mg] || 0)) }));
+    // Gợi ý nhóm còn thiếu nhiều nhất (dựa trên số kcal còn thiếu)
+    let deficits = muscleGroups.map(mg => ({ 
+        name: mg, 
+        remaining: Math.max(0, targetCalPerGroup[mg] - (actualCal[mg] || 0))
+    }));
     deficits.sort((a,b) => b.remaining - a.remaining);
     let topDeficit = deficits[0];
     if (topDeficit && topDeficit.remaining > 0) {
