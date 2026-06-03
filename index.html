@@ -209,7 +209,7 @@ function getActualCaloriesPerMuscleLastNDays(days) {
 }
 
 // Cập nhật tab Vùng cơ với mục tiêu calo theo cân nặng (tỷ lệ mặc định 25% mỗi nhóm)
-function updateMuscleGoalStats() {
+function updateMuscleStats() {
     const muscleGroups = ["Chân-Mông", "Core", "Ngực-Vai-Tay", "Lưng trên"];
     const targetRatios = {
         "Chân-Mông": 0.35,
@@ -1438,58 +1438,6 @@ function updateWeeklyGoal() {
     document.getElementById("goalProgressFill").style.width = percent + "%";
     document.getElementById("goalProgressFill").innerText   = percent + "%";
     document.getElementById("goalStatus").innerHTML = `Đạt ${current}/${goal.target} ${goal.type === "sessions" ? "buổi" : "kcal"}`;
-}
-
-function updateMuscleStats() {
-    const muscleGroups = ["Chân-Mông", "Core", "Ngực-Vai-Tay", "Lưng trên"];
-    const targetRatio = 0.25; // mỗi nhóm 25%
-    const totalWeeklyCalTarget = getRecommendedWeeklyCalories(appData.currentWeight);
-    const targetCalPerGroup = totalWeeklyCalTarget * targetRatio;
-
-    // Tính calo thực tế cho từng nhóm trong 7 ngày qua
-    let now = new Date();
-    let start = new Date(now);
-    start.setDate(now.getDate() - 7);
-    start.setHours(0,0,0,0);
-    let recent = appData.workoutSessions.filter(s => new Date(s.date) >= start && s.durationMin && s.totalCalo);
-
-    let actualCal = { "Chân-Mông":0, "Core":0, "Ngực-Vai-Tay":0, "Lưng trên":0 };
-    recent.forEach(s => {
-        let groups = s.muscleGroups;
-        if (!Array.isArray(groups) || groups.length === 0) return;
-        let caloPerGroup = s.totalCalo / groups.length;
-        groups.forEach(g => {
-            if (actualCal[g] !== undefined) actualCal[g] += caloPerGroup;
-        });
-    });
-
-    let html = "";
-    for (let mg of muscleGroups) {
-        let achieved = actualCal[mg];
-        let percent = targetCalPerGroup > 0 ? Math.min(100, Math.round((achieved / targetCalPerGroup) * 100)) : 0;
-        let remaining = Math.max(0, targetCalPerGroup - achieved);
-        html += `
-            <div class="muscle-card">
-                <strong>${mg}</strong><br>
-                Đã đạt: ${Math.round(achieved)} / ${Math.round(targetCalPerGroup)} kcal<br>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width:${percent}%">${percent}%</div>
-                </div>
-                ${remaining > 0 ? `<span class="remaining-cal">Còn thiếu ${Math.round(remaining)} kcal</span>` : '🎉 Đạt mục tiêu'}
-            </div>
-        `;
-    }
-    document.getElementById("muscleStatsContainer").innerHTML = html;
-
-    // Gợi ý nhóm thiếu nhất
-    let sorted = muscleGroups.map(mg => ({ name: mg, remaining: Math.max(0, targetCalPerGroup - actualCal[mg]) }))
-                             .sort((a,b) => b.remaining - a.remaining);
-    let mostDeficit = sorted[0];
-    if (mostDeficit && mostDeficit.remaining > 0) {
-        document.getElementById("muscleSuggestion").innerHTML = `💡 Hôm nay nên tập trung vào <strong>${mostDeficit.name}</strong> (còn thiếu ${Math.round(mostDeficit.remaining)} kcal)`;
-    } else {
-        document.getElementById("muscleSuggestion").innerHTML = `🎉 Tất cả các nhóm cơ đã đạt mục tiêu tuần!`;
-    }
 }
 
 // ==================== BÀI TẬP VỚI CHỌN NHÓM CƠ KHI THAY BÀI ====================
