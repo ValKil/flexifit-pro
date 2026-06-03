@@ -1804,6 +1804,29 @@ document.getElementById("goalValue").addEventListener("change", () => { appData.
 
 // ==================== KHỞI ĐỘNG ====================
 loadAppData();
+// ==================== TỰ ĐỘNG LƯU TOKEN & GIST ID ====================
+function loadSyncSettings() {
+    const savedToken = localStorage.getItem("flexifit_github_token");
+    const savedGistId = localStorage.getItem("flexifit_gist_id");
+    if (savedToken) document.getElementById("githubToken").value = savedToken;
+    if (savedGistId) document.getElementById("gistId").value = savedGistId;
+}
+
+function saveSyncSettings() {
+    const token = document.getElementById("githubToken").value.trim();
+    const gistId = document.getElementById("gistId").value.trim();
+    if (token) localStorage.setItem("flexifit_github_token", token);
+    else localStorage.removeItem("flexifit_github_token");
+    if (gistId) localStorage.setItem("flexifit_gist_id", gistId);
+    else localStorage.removeItem("flexifit_gist_id");
+}
+
+// Gắn sự kiện lưu khi người dùng nhập
+document.getElementById("githubToken").addEventListener("input", saveSyncSettings);
+document.getElementById("gistId").addEventListener("input", saveSyncSettings);
+
+// Gọi khôi phục sau loadAppData
+loadSyncSettings();
 document.getElementById("workoutDate").value = new Date().toISOString().slice(0, 10);
 document.getElementById("sportDate").value   = new Date().toISOString().slice(0, 10);
 </script>
