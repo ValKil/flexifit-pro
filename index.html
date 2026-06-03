@@ -1,1834 +1,1413 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>FlexiFit Pro · Mục tiêu vùng cơ theo cân nặng</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background: #eef2f5; font-family: 'Segoe UI', Roboto, sans-serif; padding: 16px; color: #1e2a3e; }
-        .container { max-width: 1000px; margin: 0 auto; }
-        .card { background: white; border-radius: 28px; box-shadow: 0 6px 14px rgba(0,0,0,0.05); padding: 20px 24px; margin-bottom: 24px; }
-        h1 { font-size: 1.8rem; background: linear-gradient(135deg, #1f6e43, #0f4c2f); -webkit-background-clip: text; background-clip: text; color: transparent; }
-        .sub { color: #4a627a; font-size: 0.85rem; margin-bottom: 16px; border-left: 3px solid #2b7a4b; padding-left: 12px; }
-        .tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
-        .tab-btn { background: #e2e8f0; border: none; padding: 10px 20px; border-radius: 60px; font-weight: 600; cursor: pointer; }
-        .tab-btn.active { background: #2b7a4b; color: white; }
-        .tab-pane { display: none; }
-        .tab-pane.active-pane { display: block; }
-        label { font-weight: 600; display: block; margin: 12px 0 6px; font-size: 0.9rem; }
-        input, select, button { width: 100%; padding: 12px 14px; border-radius: 60px; border: 1px solid #cbd5e1; font-size: 1rem; }
-        button { background: #2b7a4b; color: white; font-weight: bold; border: none; cursor: pointer; margin-top: 12px; }
-        button.secondary { background: #3b5e7a; }
-        button.outline { background: white; border: 1px solid #2b7a4b; color: #2b7a4b; }
-        .flex-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
-        .badge { background: #eaf4e5; padding: 6px 12px; border-radius: 40px; font-size: 0.8rem; color: #1f6e43; display: inline-block; }
-        .workout-card { background: #f9fbfd; border-left: 5px solid #f4b942; padding: 16px; border-radius: 24px; margin: 16px 0; }
-        .exercise-detail { background: white; border-radius: 20px; padding: 14px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .exercise-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
-        .complete-check { width: 24px; height: 24px; accent-color: #2b7a4b; }
-        .rep-guide { font-size: 0.9rem; color: #2c3e50; margin-top: 8px; padding: 10px; background: #f8fafc; border-radius: 16px; line-height: 1.4; }
-        .warning-note { background: #fff3e0; border-left: 4px solid #e67e22; padding: 8px 12px; border-radius: 0 16px 16px 0; margin-top: 8px; font-size: 0.85rem; }
-        .progress-bar { background: #e2e8f0; border-radius: 20px; height: 20px; overflow: hidden; margin: 8px 0; }
-        .progress-fill { background: #2b7a4b; height: 100%; width: 0%; color: white; line-height: 20px; padding-left: 8px; font-size: 0.75rem; }
-        .muscle-stats { display: flex; gap: 12px; flex-wrap: wrap; justify-content: space-between; }
-        .muscle-card { background: #f1f5f9; border-radius: 20px; padding: 12px; flex: 1; text-align: center; min-width: 180px; }
-        .history-item { border-bottom: 1px solid #e2e8f0; padding: 12px 0; }
-        .export-btn { background: #2c7da0; }
-        .replace-select { margin-left: 8px; padding: 4px 8px; font-size: 0.75rem; width: auto; min-width: 100px; border-radius: 40px; }
-        .target-proposal { background: #f0f9f0; border-radius: 20px; padding: 12px; margin-top: 12px; border-left: 4px solid #2b7a4b; }
-        .remaining-cal { font-weight: bold; color: #d97706; }
-        @media (max-width: 600px) { body { padding: 12px; } .card { padding: 16px; } .muscle-card { min-width: 100%; } }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>FlexiFit Pro</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #1e2633;
+  --border: #2a3240;
+  --accent: #00e5a0;
+  --accent2: #00b37a;
+  --accent-dim: rgba(0,229,160,0.1);
+  --text: #e8edf3;
+  --text-muted: #7a8899;
+  --text-dim: #4a5668;
+  --warn: #f5a623;
+  --danger: #ff5c5c;
+  --blue: #4da6ff;
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: 40px;
+}
+
+/* Background texture */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 10% 0%, rgba(0,229,160,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 90% 80%, rgba(77,166,255,0.05) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.wrap { max-width: 900px; margin: 0 auto; padding: 20px 16px; position: relative; z-index: 1; }
+
+/* ── HEADER ── */
+.header {
+  padding: 28px 0 20px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand-icon {
+  width: 44px; height: 44px;
+  background: var(--accent);
+  border-radius: 12px;
+  display: grid; place-items: center;
+  font-size: 1.3rem;
+  box-shadow: 0 0 20px rgba(0,229,160,0.4);
+}
+.brand-text h1 {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 1.5rem;
+  color: var(--text);
+  letter-spacing: -0.5px;
+}
+.brand-text p { font-size: 0.78rem; color: var(--text-muted); margin-top: 2px; }
+
+.header-stats {
+  display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+}
+
+.stat-pill {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 40px;
+  padding: 7px 14px;
+  font-size: 0.82rem;
+  display: flex; align-items: center; gap: 6px;
+  color: var(--text-muted);
+}
+.stat-pill strong { color: var(--accent); font-size: 0.9rem; }
+
+.deload-badge {
+  background: rgba(245,166,35,0.15);
+  border: 1px solid rgba(245,166,35,0.4);
+  color: var(--warn);
+  border-radius: 40px;
+  padding: 6px 14px;
+  font-size: 0.8rem;
+}
+
+/* ── QUICK INPUTS ── */
+.quick-row {
+  display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 24px;
+}
+.quick-field {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  display: flex; align-items: center; gap: 8px;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+.quick-field input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  width: 70px;
+  padding: 0;
+}
+
+/* ── GOAL BAR ── */
+.goal-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin-bottom: 24px;
+}
+.goal-block label {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  display: block;
+  margin-bottom: 10px;
+}
+.goal-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.goal-row select, .goal-row input[type=number] {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  padding: 8px 12px;
+}
+.goal-row select { flex: 1; min-width: 150px; }
+.goal-row input[type=number] { width: 110px; }
+.progress-track {
+  background: var(--surface2);
+  border-radius: 999px;
+  height: 8px;
+  margin-top: 12px;
+  overflow: hidden;
+}
+.progress-fill {
+  background: linear-gradient(90deg, var(--accent2), var(--accent));
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.6s cubic-bezier(.4,0,.2,1);
+  min-width: 0;
+}
+.goal-status { font-size: 0.8rem; color: var(--text-muted); margin-top: 6px; }
+
+/* ── TABS ── */
+.tabs {
+  display: flex; gap: 2px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 4px;
+  margin-bottom: 20px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 9px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.tab-btn:hover { color: var(--text); background: var(--surface2); }
+.tab-btn.active {
+  background: var(--accent);
+  color: #0d1117;
+  font-weight: 700;
+  box-shadow: 0 2px 12px rgba(0,229,160,0.3);
+}
+.tab-pane { display: none; }
+.tab-pane.active-pane { display: block; }
+
+/* ── CARD ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  margin-bottom: 16px;
+}
+.card-title {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text);
+  margin-bottom: 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+
+/* ── FORM ELEMENTS ── */
+label { display: block; font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin: 14px 0 6px; }
+input[type=date], input[type=time], input[type=number], input[type=text], input[type=password], select {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  padding: 11px 14px;
+  outline: none;
+  transition: border-color 0.2s;
+  appearance: none;
+}
+input:focus, select:focus { border-color: var(--accent); }
+select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a8899' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 34px; }
+
+/* ── BUTTONS ── */
+.btn {
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  width: 100%;
+  padding: 12px 20px;
+  border-radius: var(--radius-sm);
+  border: none;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 12px;
+}
+.btn-primary { background: var(--accent); color: #0d1117; }
+.btn-primary:hover { background: var(--accent2); box-shadow: 0 4px 16px rgba(0,229,160,0.3); }
+.btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+.btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+.btn-blue { background: rgba(77,166,255,0.15); color: var(--blue); border: 1px solid rgba(77,166,255,0.3); }
+.btn-blue:hover { background: rgba(77,166,255,0.25); }
+.btn-danger { background: rgba(255,92,92,0.12); color: var(--danger); border: 1px solid rgba(255,92,92,0.3); }
+.btn-danger:hover { background: rgba(255,92,92,0.22); }
+.btn-sm { width: auto; padding: 6px 14px; font-size: 0.8rem; margin-top: 0; border-radius: 8px; }
+
+/* ── TWO-COL ── */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 480px) { .two-col { grid-template-columns: 1fr; } }
+
+/* ── WORKOUT EXERCISES ── */
+.workout-meta {
+  background: var(--accent-dim);
+  border: 1px solid rgba(0,229,160,0.2);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  font-size: 0.85rem;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+
+.ex-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  transition: border-color 0.2s;
+}
+.ex-card:hover { border-color: rgba(0,229,160,0.3); }
+.ex-card.done { border-color: var(--accent); background: rgba(0,229,160,0.05); }
+
+.ex-head {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.ex-name { font-weight: 600; font-size: 0.92rem; color: var(--text); flex: 1; }
+.ex-controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+.tag {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  padding: 3px 10px;
+  border-radius: 99px;
+  white-space: nowrap;
+}
+.tag.accent { background: var(--accent-dim); border-color: rgba(0,229,160,0.3); color: var(--accent); }
+
+.replace-select {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-muted);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  width: auto;
+  min-width: 110px;
+  appearance: none;
+  cursor: pointer;
+}
+
+.ex-guide {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  padding: 10px 12px;
+  background: var(--bg);
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+.ex-guide strong { color: var(--text); }
+.ex-guide .reps { color: var(--accent); font-weight: 600; }
+
+.ex-warning {
+  font-size: 0.78rem;
+  color: var(--warn);
+  background: rgba(245,166,35,0.07);
+  border-left: 3px solid var(--warn);
+  padding: 7px 10px;
+  border-radius: 0 6px 6px 0;
+}
+
+.completion-bar-wrap {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  display: flex; align-items: center; gap: 14px;
+  margin-top: 4px;
+}
+.completion-label { font-size: 0.82rem; color: var(--text-muted); white-space: nowrap; }
+.completion-pct { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.1rem; color: var(--accent); min-width: 44px; text-align: right; }
+
+/* ── MUSCLE STATS ── */
+.muscle-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+
+.muscle-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  transition: border-color 0.2s;
+}
+.muscle-card:hover { border-color: rgba(0,229,160,0.3); }
+.muscle-card-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.88rem; color: var(--text); margin-bottom: 8px; }
+.muscle-nums { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 8px; display: flex; justify-content: space-between; }
+.muscle-nums strong { color: var(--text); }
+.muscle-remaining { font-size: 0.78rem; color: var(--warn); margin-top: 6px; }
+.muscle-ok { font-size: 0.78rem; color: var(--accent); margin-top: 6px; }
+
+.muscle-formula {
+  background: var(--accent-dim);
+  border: 1px solid rgba(0,229,160,0.2);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 12px;
+  line-height: 1.5;
+}
+.muscle-formula strong { color: var(--accent); }
+
+.suggestion-bar {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+.suggestion-bar strong { color: var(--text); }
+
+/* ── HISTORY ── */
+.history-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--border);
+}
+.history-item:last-child { border-bottom: none; }
+.history-check { width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; flex-shrink: 0; }
+.history-info { flex: 1; }
+.history-date { font-size: 0.72rem; color: var(--text-muted); }
+.history-name { font-size: 0.88rem; color: var(--text); font-weight: 500; }
+.history-stats { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+.history-calo { color: var(--accent); font-weight: 600; font-size: 0.85rem; white-space: nowrap; }
+
+.history-actions { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+
+/* ── WEIGHT CHART ── */
+.chart-wrap { margin-top: 16px; position: relative; }
+
+/* ── SPORT PREVIEW ── */
+.sport-preview {
+  background: var(--accent-dim);
+  border: 1px solid rgba(0,229,160,0.25);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-size: 0.85rem;
+  color: var(--accent);
+  margin-top: 12px;
+  font-weight: 600;
+}
+
+/* ── SYNC ── */
+.sync-note { font-size: 0.78rem; color: var(--text-muted); margin-top: 8px; line-height: 1.5; }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 600px) {
+  .header { padding: 16px 0 12px; }
+  .brand-text h1 { font-size: 1.25rem; }
+  .tab-btn { padding: 8px 11px; font-size: 0.78rem; }
+}
+
+/* ── CHECKBOX DONE ── */
+.done-label {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 0.78rem; color: var(--text-muted);
+  cursor: pointer; user-select: none;
+}
+.done-label input { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; }
+
+/* ── SECTION TITLE ── */
+.section-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+}
+</style>
 </head>
 <body>
-<div class="container">
+<div class="wrap">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="brand">
+      <div class="brand-icon">⚡</div>
+      <div class="brand-text">
+        <h1>FlexiFit Pro</h1>
+        <p>Mục tiêu vùng cơ theo cân nặng</p>
+      </div>
+    </div>
+    <div class="header-stats">
+      <div class="stat-pill">🔥 Hôm nay <strong id="todayCalories">0</strong> kcal</div>
+      <div class="stat-pill">⚖️ <strong id="currentWeightSpan">90</strong> kg</div>
+      <div id="deloadNotice"></div>
+    </div>
+  </div>
+
+  <!-- QUICK INPUTS -->
+  <div class="quick-row">
+    <div class="quick-field">🎂 Tuổi <input type="number" id="ageInput" value="30" min="10" max="100"></div>
+    <div class="quick-field">🎯 Cân mục tiêu <input type="number" id="targetWeightInput" value="70" step="1"> kg</div>
+  </div>
+
+  <!-- GOAL BAR -->
+  <div class="goal-block">
+    <label>🎯 Mục tiêu tuần</label>
+    <div class="goal-row">
+      <select id="goalType"><option value="sessions">Số buổi tập</option><option value="calories">Calo tiêu hao</option></select>
+      <input type="number" id="goalValue" placeholder="Ví dụ: 4 buổi">
+    </div>
+    <div class="progress-track"><div id="goalProgressFill" class="progress-fill" style="width:0%"></div></div>
+    <div class="goal-status" id="goalStatus">Chưa đặt mục tiêu</div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="workoutTab">🏋️ Bài tập</button>
+    <button class="tab-btn" data-tab="sportTab">⚽ Thể thao</button>
+    <button class="tab-btn" data-tab="muscleTab">💪 Vùng cơ</button>
+    <button class="tab-btn" data-tab="historyTab">📜 Lịch sử</button>
+    <button class="tab-btn" data-tab="weightTab">📈 Cân nặng</button>
+    <button class="tab-btn" data-tab="exportTab">📎 Xuất Excel</button>
+    <button class="tab-btn" data-tab="syncTab">☁️ Đồng bộ</button>
+  </div>
+
+  <!-- TAB: BÀI TẬP -->
+  <div id="workoutTab" class="tab-pane active-pane">
     <div class="card">
-        <h1>⚡ FlexiFit Pro</h1>
-        <div class="sub">Mục tiêu vùng cơ theo cân nặng · Tự động tính calo còn thiếu</div>
-        <div class="flex-row" style="justify-content: space-between;">
-            <div style="background:#f1f5f9; padding:8px; border-radius:20px;">⚖️ <span id="currentWeightSpan">90</span> kg</div>
-            <div style="background:#f1f5f9; padding:8px; border-radius:20px;">🔥 Hôm nay: <span id="todayCalories">0</span> kcal</div>
-        </div>
-        
-        <!-- Mục tiêu tuần tùy chọn (cũ) -->
-        <div id="goalPanel">
-            <label>🎯 Mục tiêu tuần (tùy chọn)</label>
-            <select id="goalType"><option value="sessions">Số buổi tập</option><option value="calories">Calo tiêu hao</option></select>
-            <input type="number" id="goalValue" placeholder="Ví dụ: 4 buổi hoặc 2000 kcal">
-            <div class="progress-bar"><div id="goalProgressFill" class="progress-fill" style="width:0%">0%</div></div>
-            <div id="goalStatus" class="badge">Chưa đặt mục tiêu</div>
-        </div>
+      <div class="card-title">🗓️ Thông tin buổi tập</div>
+      <label>Ngày tập</label>
+      <input type="date" id="workoutDate">
+      <div class="two-col">
+        <div><label>😴 Giờ ngủ</label><input type="time" id="sleepTime" value="00:30"></div>
+        <div><label>🌅 Giờ thức</label><input type="time" id="wakeTime" value="07:00"></div>
+      </div>
+      <label>🦵 Tình trạng gối (1–5)</label>
+      <select id="kneeStatus">
+        <option value="1">1 — Yếu (tránh tác động)</option>
+        <option value="2">2 — Hạn chế</option>
+        <option value="3" selected>3 — Trung bình</option>
+        <option value="4">4 — Khá tốt</option>
+        <option value="5">5 — Tốt</option>
+      </select>
+      <label>⏱️ Thời gian rảnh (phút)</label>
+      <input type="number" id="freeMinutes" value="20" min="5" max="120">
+      <button class="btn btn-primary" id="generateWorkoutBtn">✨ Tạo bài tập</button>
     </div>
 
-    <div class="tabs">
-        <button class="tab-btn active" data-tab="workoutTab">🏋️ Bài tập</button>
-        <button class="tab-btn" data-tab="sportTab">⚽ Thể thao</button>
-        <button class="tab-btn" data-tab="muscleTab">💪 Vùng cơ</button>
-        <button class="tab-btn" data-tab="historyTab">📜 Lịch sử</button>
-        <button class="tab-btn" data-tab="weightTab">📈 Cân nặng</button>
-        <button class="tab-btn" data-tab="exportTab">📎 Xuất Excel</button>
-        <button class="tab-btn" data-tab="syncTab">☁️ Đồng bộ</button>
-    </div>
+    <div id="generatedWorkoutArea"></div>
 
-    <!-- TAB BÀI TẬP -->
-    <div id="workoutTab" class="tab-pane active-pane">
-        <div class="card">
-            <input type="date" id="workoutDate" value="">
-            <div class="flex-row">
-                <div style="flex:1"><label>😴 Ngủ</label><input type="time" id="sleepTime" value="00:30"></div>
-                <div style="flex:1"><label>🌅 Thức</label><input type="time" id="wakeTime" value="07:00"></div>
-            </div>
-            <label>🦵 Gối (1-5)</label>
-            <select id="kneeStatus">
-                <option value="1">1 — Yếu (tránh tác động)</option>
-                <option value="2">2 — Hạn chế</option>
-                <option value="3" selected>3 — Trung bình</option>
-                <option value="4">4 — Khá tốt</option>
-                <option value="5">5 — Tốt</option>
-            </select>
-            <label>⏱️ Thời gian rảnh (phút)</label>
-            <input type="number" id="freeMinutes" value="20" min="5" max="120">
-            <button id="generateWorkoutBtn">✨ Tạo bài tập</button>
-            <div id="generatedWorkoutArea"></div>
-            <button id="saveWorkoutSessionBtn" class="secondary">💾 Lưu buổi tập</button>
-        </div>
-    </div>
+    <button class="btn btn-secondary" id="saveWorkoutSessionBtn" style="display:none;">💾 Lưu buổi tập</button>
+  </div>
 
-    <!-- TAB THỂ THAO -->
-    <div id="sportTab" class="tab-pane">
-        <div class="card">
-            <input type="date" id="sportDate" value="">
-            <label>Loại hình</label>
-            <select id="sportType">
-                <option value="football_5_goal">🥅 Bóng đá sân5 - Thủ môn</option>
-                <option value="football_5_defender">🛡️ Hậu vệ</option>
-                <option value="football_5_mid">⚡ Tiền vệ</option>
-                <option value="badminton">🏸 Cầu lông</option>
-                <option value="running">🏃 Chạy bộ</option>
-                <option value="swimming">🏊 Bơi lội</option>
-                <option value="gym_free">💪 Tập gym/tạ</option>
-                <option value="walking">🚶 Đi bộ nhanh</option>
-            </select>
-            <label>Thời gian (phút)</label>
-            <input type="number" id="sportMinutes" value="60">
-            <div id="sportCaloPreview" class="badge">🔥 Calo: --</div>
-            <button id="addSportBtn">➕ Thêm hoạt động</button>
-        </div>
+  <!-- TAB: THỂ THAO -->
+  <div id="sportTab" class="tab-pane">
+    <div class="card">
+      <div class="card-title">⚽ Ghi nhận hoạt động thể thao</div>
+      <label>Ngày</label>
+      <input type="date" id="sportDate">
+      <label>Loại hình</label>
+      <select id="sportType">
+        <option value="football_5_goal">🥅 Bóng đá sân5 - Thủ môn</option>
+        <option value="football_5_defender">🛡️ Bóng đá sân5 - Hậu vệ</option>
+        <option value="football_5_mid">⚡ Bóng đá sân5 - Tiền vệ</option>
+        <option value="badminton">🏸 Cầu lông</option>
+        <option value="running">🏃 Chạy bộ</option>
+        <option value="swimming">🏊 Bơi lội</option>
+        <option value="gym_free">💪 Tập gym / tạ</option>
+        <option value="walking">🚶 Đi bộ nhanh</option>
+      </select>
+      <label>Thời gian (phút)</label>
+      <input type="number" id="sportMinutes" value="60">
+      <div class="sport-preview" id="sportCaloPreview">🔥 Calo: --</div>
+      <button class="btn btn-primary" id="addSportBtn">➕ Thêm hoạt động</button>
     </div>
+  </div>
 
-    <!-- TAB VÙNG CƠ (ĐÃ CẬP NHẬT MỤC TIÊU CALO THEO CÂN NẶNG) -->
-    <div id="muscleTab" class="tab-pane">
-        <div class="card">
-            <h3>📊 Mục tiêu calo theo cân nặng (7 ngày qua)</h3>
-            <div id="muscleStatsContainer" class="muscle-stats"></div>
-            <div id="muscleSuggestion" class="badge" style="margin-top:12px;"></div>
-            <div class="target-proposal" style="margin-top:16px;">
-                <small>⚡ Mục tiêu calo mỗi nhóm = Chân-mông 35%; Lưng trên 25%; Ngực-vai-tay 20%, Core 20% theo tổng mục tiêu tuần (30 × cân nặng kg). Bạn có thể điều chỉnh tỷ lệ này sau.</small>
-            </div>
-        </div>
+  <!-- TAB: VÙNG CƠ -->
+  <div id="muscleTab" class="tab-pane">
+    <div class="card">
+      <div class="card-title">📊 Mục tiêu calo theo vùng cơ — 7 ngày qua</div>
+      <div class="suggestion-bar" id="muscleSuggestion">...</div>
+      <div class="muscle-grid" id="muscleStatsContainer"></div>
+      <div class="muscle-formula">
+        <strong>Công thức:</strong> Mục tiêu tuần = cân nặng × K (4.5–6.0) × 7 ngày. Phân bổ: Chân-Mông 35% · Lưng trên 25% · Ngực-Vai-Tay 20% · Core 20%.
+      </div>
     </div>
+  </div>
 
-    <!-- LỊCH SỬ -->
-    <div id="historyTab" class="tab-pane">
-        <div class="card">
-            <div style="display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
-                <button id="selectAllHistoryBtn" class="outline" style="width: auto;">☑️ Chọn tất cả</button>
-                <button id="deleteSelectedHistoryBtn" class="outline" style="width: auto; background: #dc2626; color: white;">🗑️ Xóa mục đã chọn</button>
-                <button id="clearHistoryBtn" class="outline" style="width: auto;">⚠️ Xóa toàn bộ</button>
-            </div>
-            <div id="historyList"></div>
-        </div>
+  <!-- TAB: LỊCH SỬ -->
+  <div id="historyTab" class="tab-pane">
+    <div class="card">
+      <div class="card-title">📜 Lịch sử hoạt động</div>
+      <div class="history-actions">
+        <button class="btn btn-secondary btn-sm" id="selectAllHistoryBtn">☑️ Chọn tất cả</button>
+        <button class="btn btn-danger btn-sm" id="deleteSelectedHistoryBtn">🗑️ Xóa đã chọn</button>
+        <button class="btn btn-secondary btn-sm" id="clearHistoryBtn">⚠️ Xóa toàn bộ</button>
+      </div>
+      <div id="historyList"></div>
     </div>
+  </div>
 
-    <!-- CÂN NẶNG + BIỂU ĐỒ -->
-    <div id="weightTab" class="tab-pane">
-        <div class="card">
-            <label>Cân nặng mới (kg)</label>
-            <input type="number" id="weightUpdate" step="0.1">
-            <button id="updateWeightBtn">Lưu</button>
-            <canvas id="weightChartCanvas" width="400" height="200" style="max-width:100%; margin-top:16px;"></canvas>
-        </div>
+  <!-- TAB: CÂN NẶNG -->
+  <div id="weightTab" class="tab-pane">
+    <div class="card">
+      <div class="card-title">📈 Cập nhật cân nặng</div>
+      <label>Cân nặng hiện tại (kg)</label>
+      <input type="number" id="weightUpdate" step="0.1" placeholder="Nhập kg">
+      <button class="btn btn-primary" id="updateWeightBtn">💾 Lưu cân nặng</button>
+      <div class="chart-wrap">
+        <canvas id="weightChartCanvas" height="200" style="max-width:100%;"></canvas>
+      </div>
     </div>
+  </div>
 
-    <!-- XUẤT EXCEL -->
-    <div id="exportTab" class="tab-pane">
-        <div class="card">
-            <h3>📎 Xuất dữ liệu ra Excel (CSV)</h3>
-            <p style="margin: 8px 0 4px; color:#4a627a; font-size:0.9rem;">Bao gồm: lịch sử tập, thể thao, cân nặng.</p>
-            <button id="exportExcelBtn" class="export-btn">⬇️ Tải file Excel (.csv)</button>
-        </div>
+  <!-- TAB: XUẤT EXCEL -->
+  <div id="exportTab" class="tab-pane">
+    <div class="card">
+      <div class="card-title">📎 Xuất dữ liệu Excel (.csv)</div>
+      <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">Bao gồm toàn bộ lịch sử tập luyện, thể thao và cân nặng.</p>
+      <button class="btn btn-blue" id="exportExcelBtn">⬇️ Tải file .csv</button>
     </div>
+  </div>
 
-    <!-- ĐỒNG BỘ GIST -->
-    <div id="syncTab" class="tab-pane">
-        <div class="card">
-            <label>🔑 GitHub Token (quyền gist)</label>
-            <input type="password" id="githubToken">
-            <label>📄 Gist ID</label>
-            <input type="text" id="gistId">
-            <button id="backupToGistBtn">💾 Sao lưu lên Gist</button>
-            <button id="restoreFromGistBtn" class="outline">⬇️ Khôi phục</button>
-            <div id="gistStatus" class="badge"></div>
-        </div>
+  <!-- TAB: ĐỒNG BỘ -->
+  <div id="syncTab" class="tab-pane">
+    <div class="card">
+      <div class="card-title">☁️ Đồng bộ GitHub Gist</div>
+      <label>🔑 GitHub Token (quyền gist)</label>
+      <input type="password" id="githubToken" placeholder="ghp_...">
+      <label>📄 Gist ID</label>
+      <input type="text" id="gistId" placeholder="Để trống nếu tạo mới">
+      <div class="two-col" style="margin-top:12px;">
+        <button class="btn btn-primary" style="margin-top:0;" id="backupToGistBtn">💾 Sao lưu lên Gist</button>
+        <button class="btn btn-secondary" style="margin-top:0;" id="restoreFromGistBtn">⬇️ Khôi phục</button>
+      </div>
+      <p class="sync-note" id="gistStatus"></p>
     </div>
-</div>
+  </div>
+
+</div><!-- /wrap -->
 
 <script>
 // ==================== DỮ LIỆU ====================
 let appData = {
-    currentWeight: 90,
-    weightHistory: [],
-    workoutSessions: [],
-    weeklyGoal: { type: "sessions", target: 4 }
+  currentWeight: 90,
+  weightHistory: [],
+  workoutSessions: [],
+  weeklyGoal: { type: "sessions", target: 5 },
+  age: 35,
+  targetWeight: 70,
+  weeklyGoalStatus: []
 };
 
-// Hàm mục tiêu calo tuần theo cân nặng (30 * kg)
-function getRecommendedWeeklyCalories(weight) {
-    return Math.round(30 * weight);
+function getWeekNumber(date) {
+  const d = new Date(date);
+  d.setHours(0,0,0,0);
+  d.setDate(d.getDate() + 4 - (d.getDay() || 7));
+  const yearStart = new Date(d.getFullYear(),0,1);
+  return Math.ceil((((d - yearStart) / 86400000) + 1)/7);
 }
 
-// Tính calo thực tế cho từng nhóm cơ trong N ngày qua (dựa trên calo session chia đều)
+function calculateWeeklyTargetCalories(weight, age, targetWeight, isDeload = false) {
+  const W_start = 90, K_max = 6.0, K_min = 4.5;
+  let K_dynamic;
+  if (weight >= W_start) {
+    K_dynamic = K_min + (K_max - K_min) * (weight - targetWeight) / (W_start - targetWeight);
+  } else if (weight <= targetWeight) {
+    K_dynamic = K_min;
+  } else {
+    K_dynamic = K_min + (K_max - K_min) * (weight - targetWeight) / (W_start - targetWeight);
+  }
+  K_dynamic = Math.min(K_max, Math.max(K_min, K_dynamic));
+  let ageFactor = (age > 35) ? 1 - 0.01 * Math.max(0, (age - 35) / 10) : 1;
+  let K_age = K_dynamic * ageFactor;
+  let target = Math.round(weight * K_age * 7);
+  if (isDeload) target = Math.round(target * 0.6);
+  return target;
+}
+
+function isDeloadWeek() {
+  if (!appData.weeklyGoalStatus) appData.weeklyGoalStatus = [];
+  const now = new Date();
+  const currentWeekNum = getWeekNumber(now);
+  const lastStatus = appData.weeklyGoalStatus.find(s => s.weekNumber === currentWeekNum);
+  if (lastStatus && lastStatus.isDeload) return true;
+  let prevWeeks = [];
+  for (let i = 1; i <= 3; i++) {
+    let d = new Date(now);
+    d.setDate(now.getDate() - i*7);
+    let weekNum = getWeekNumber(d);
+    let status = appData.weeklyGoalStatus.find(s => s.weekNumber === weekNum);
+    prevWeeks.push(!!(status && status.achieved === true));
+  }
+  const allAchieved = prevWeeks.every(v => v === true);
+  if (allAchieved && prevWeeks.length === 3) {
+    appData.weeklyGoalStatus.push({ weekNumber: currentWeekNum, achieved: true, isDeload: true });
+    return true;
+  }
+  return false;
+}
+
+function getTotalCaloriesCurrentWeek() {
+    const now = new Date();
+    const currentWeek = getWeekNumber(now);
+    return appData.workoutSessions
+        .filter(s => getWeekNumber(new Date(s.date)) === currentWeek)
+        .reduce((acc, s) => acc + (s.totalCalo || 0), 0);
+}
+
+function updateCurrentWeekAchievement() {
+  const now = new Date();
+  const currentWeekNum = getWeekNumber(now);
+  let totalCalo = getTotalCaloriesCurrentWeek;
+  const isDeload = isDeloadWeek();
+  const target = calculateWeeklyTargetCalories(appData.currentWeight, appData.age, appData.targetWeight, isDeload);
+  const achieved = totalCalo >= target;
+  const idx = appData.weeklyGoalStatus.findIndex(s => s.weekNumber === currentWeekNum);
+  if (idx !== -1) appData.weeklyGoalStatus[idx].achieved = achieved;
+  else appData.weeklyGoalStatus.push({ weekNumber: currentWeekNum, achieved, isDeload });
+}
+
+function getTotalCaloriesLastNDays(days) {
+  let now = new Date();
+  let start = new Date(now);
+  start.setDate(now.getDate() - days);
+  start.setHours(0,0,0,0);
+  return appData.workoutSessions
+    .filter(s => new Date(s.date) >= start)
+    .reduce((acc, s) => acc + (s.totalCalo || 0), 0);
+}
+
 function getActualCaloriesPerMuscleLastNDays(days) {
-    let now = new Date();
-    let start = new Date(now);
-    start.setDate(now.getDate() - days);
-    start.setHours(0,0,0,0);
-    let recent = appData.workoutSessions.filter(s => new Date(s.date) >= start && s.durationMin && s.totalCalo);
-    let calMap = { "Chân-Mông":0, "Core":0, "Ngực-Vai-Tay":0, "Lưng trên":0 };
-    recent.forEach(s => {
-        let groups = s.muscleGroups;
-        if (!Array.isArray(groups) || groups.length === 0) return;
-        let caloPerGroup = s.totalCalo / groups.length;
-        groups.forEach(g => {
-            if (calMap[g] !== undefined) calMap[g] += caloPerGroup;
-        });
-    });
-    return calMap;
+  let now = new Date();
+  let start = new Date(now);
+  start.setDate(now.getDate() - days);
+  start.setHours(0,0,0,0);
+  let recent = appData.workoutSessions.filter(s => new Date(s.date) >= start && s.durationMin && s.totalCalo);
+  let calMap = { "Chân-Mông":0, "Core":0, "Ngực-Vai-Tay":0, "Lưng trên":0 };
+  recent.forEach(s => {
+    let groups = s.muscleGroups;
+    if (!Array.isArray(groups) || groups.length === 0) return;
+    let caloPerGroup = s.totalCalo / groups.length;
+    groups.forEach(g => { if (calMap[g] !== undefined) calMap[g] += caloPerGroup; });
+  });
+  return calMap;
 }
 
-// Cập nhật tab Vùng cơ với mục tiêu calo theo cân nặng (tỷ lệ mặc định 25% mỗi nhóm)
+// ==================== CHART ====================
+let weightChart = null;
+
+function drawWeightChart() {
+  if (weightChart) { weightChart.destroy(); weightChart = null; }
+  let sorted = [...appData.weightHistory].sort((a, b) => new Date(a.date) - new Date(b.date));
+  if (sorted.length === 0) return;
+
+  let labels = sorted.map(w => w.date.slice(5));
+  let data = sorted.map(w => w.weight);
+
+  // Tính dự báo
+  let avgLossPerDay = 0.07;
+  if (sorted.length >= 2) {
+    let diffWeight = sorted[sorted.length-2].weight - sorted[sorted.length-1].weight;
+    let diffDays = (new Date(sorted[sorted.length-1].date) - new Date(sorted[sorted.length-2].date)) / (1000*3600*24);
+    if (diffDays > 0) avgLossPerDay = diffWeight / diffDays;
+    if (isNaN(avgLossPerDay) || avgLossPerDay < 0) avgLossPerDay = 0.05;
+  }
+  let lastWeight = sorted[sorted.length-1].weight;
+  let predWeight = lastWeight - avgLossPerDay * 7;
+  let lowPred = predWeight - 0.4;
+  let highPred = predWeight + 0.4;
+
+  let lastDate = new Date(sorted[sorted.length-1].date);
+  let nextDate = new Date(lastDate); nextDate.setDate(lastDate.getDate() + 7);
+  let nextLabel = nextDate.toISOString().slice(5,10);
+  let allLabels = [...labels, nextLabel];
+
+  // --- Đường dự báo (đứt nét nối từ điểm cuối đến dự báo) ---
+  let forecastData = new Array(allLabels.length).fill(null);
+  forecastData[allLabels.length - 2] = lastWeight;   // vị trí cuối của lịch sử
+  forecastData[allLabels.length - 1] = predWeight;   // vị trí dự báo
+
+  // --- Vùng dự báo (chỉ hiển thị khi có từ 2 điểm dữ liệu trở lên) ---
+  let lowData = new Array(allLabels.length).fill(null);
+  let highData = new Array(allLabels.length).fill(null);
+  if (sorted.length >= 2) {
+    lowData[allLabels.length - 1] = lowPred;
+    highData[allLabels.length - 1] = highPred;
+  }
+
+  let ctx = document.getElementById("weightChartCanvas").getContext("2d");
+  weightChart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: allLabels,
+      datasets: [
+        {
+          label: "Cân nặng thực tế",
+          data: [...data, null],
+          borderColor: "#00e5a0",
+          backgroundColor: "rgba(0,229,160,0.07)",
+          tension: 0.35,
+          pointRadius: 5,
+          pointBackgroundColor: "#00e5a0",
+          fill: true
+        },
+        {
+          label: "Vùng dự báo (±0.4 kg)",
+          data: highData,
+          borderWidth: 0,
+          backgroundColor: "rgba(77,166,255,0.2)",
+          fill: '-1',
+          pointRadius: 0
+        },
+        {
+          label: " ",
+          data: lowData,
+          borderWidth: 0,
+          backgroundColor: "rgba(0,0,0,0)",
+          fill: false,
+          pointRadius: 0
+        },
+        {
+          label: "Xu hướng dự báo",
+          data: forecastData,
+          borderColor: "#4da6ff",
+          borderDash: [6, 4],
+          pointRadius: 6,
+          pointBackgroundColor: "#4da6ff",
+          fill: false,
+          tension: 0
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { labels: { color: "#7a8899", font: { family: "DM Sans", size: 12 } } },
+        tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.raw} kg` } }
+      },
+      scales: {
+        x: { ticks: { color: "#4a5668" }, grid: { color: "rgba(255,255,255,0.04)" } },
+        y: { ticks: { color: "#4a5668" }, grid: { color: "rgba(255,255,255,0.04)" }, title: { display: true, text: "kg", color: "#4a5668" } }
+      }
+    }
+  });
+}
+
+// ==================== MUSCLE STATS ====================
 function updateMuscleStats() {
-    const muscleGroups = ["Chân-Mông", "Core", "Ngực-Vai-Tay", "Lưng trên"];
-    const targetRatios = {
-        "Chân-Mông": 0.35,
-        "Core": 0.20,
-        "Ngực-Vai-Tay": 0.20,
-        "Lưng trên": 0.25
-    };
-    const totalWeeklyCalTarget = getRecommendedWeeklyCalories(appData.currentWeight);
-    let targetCalPerGroup = {};
-    for (let mg of muscleGroups) {
-        targetCalPerGroup[mg] = totalWeeklyCalTarget * targetRatios[mg];
-    }
-
-    const actualCal = getActualCaloriesPerMuscleLastNDays(7);
-
-    let html = "";
-    for (let mg of muscleGroups) {
-        let achieved = actualCal[mg] || 0;
-        let target = targetCalPerGroup[mg];
-        let percent = target > 0 ? Math.min(100, Math.round((achieved / target) * 100)) : 0;
-        let remaining = Math.max(0, target - achieved);
-        html += `
-            <div class="muscle-card">
-                <strong>${mg}</strong><br>
-                Đã đạt: ${Math.round(achieved)} / ${Math.round(target)} kcal<br>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width:${percent}%">${percent}%</div>
-                </div>
-                ${remaining > 0 ? `<span class="remaining-cal">⚠️ Còn thiếu ${Math.round(remaining)} kcal</span>` : '<span style="color:#2b7a4b;">✅ Đạt mục tiêu</span>'}
-            </div>
-        `;
-    }
-    document.getElementById("muscleStatsContainer").innerHTML = html;
-
-    // Gợi ý nhóm còn thiếu nhiều nhất (dựa trên số kcal còn thiếu)
-    let deficits = muscleGroups.map(mg => ({ 
-        name: mg, 
-        remaining: Math.max(0, targetCalPerGroup[mg] - (actualCal[mg] || 0))
-    }));
-    deficits.sort((a,b) => b.remaining - a.remaining);
-    let topDeficit = deficits[0];
-    if (topDeficit && topDeficit.remaining > 0) {
-        document.getElementById("muscleSuggestion").innerHTML = `💡 Hôm nay nên tập trung vào <strong>${topDeficit.name}</strong> (còn thiếu ${Math.round(topDeficit.remaining)} kcal)`;
-    } else {
-        document.getElementById("muscleSuggestion").innerHTML = `🎉 Tuyệt vời! Tất cả nhóm cơ đã đạt mục tiêu tuần.`;
-    }
+  const muscleGroups = ["Chân-Mông", "Core", "Ngực-Vai-Tay", "Lưng trên"];
+  const targetRatios = { "Chân-Mông": 0.35, "Core": 0.20, "Ngực-Vai-Tay": 0.20, "Lưng trên": 0.25 };
+  const isDeload = isDeloadWeek();
+  const totalWeeklyCalTarget = calculateWeeklyTargetCalories(appData.currentWeight, appData.age, appData.targetWeight, isDeload);
+  let targetCalPerGroup = {};
+  for (let mg of muscleGroups) targetCalPerGroup[mg] = totalWeeklyCalTarget * targetRatios[mg];
+  const actualCal = getActualCaloriesPerMuscleLastNDays(7);
+  let html = "";
+  for (let mg of muscleGroups) {
+    let achieved = actualCal[mg] || 0;
+    let target = targetCalPerGroup[mg];
+    let percent = target > 0 ? Math.min(100, Math.round((achieved / target) * 100)) : 0;
+    let remaining = Math.max(0, target - achieved);
+    html += `<div class="muscle-card">
+      <div class="muscle-card-name">${mg}</div>
+      <div class="muscle-nums"><span>Đã đạt</span><strong>${Math.round(achieved)} / ${Math.round(target)} kcal</strong></div>
+      <div class="progress-track"><div class="progress-fill" style="width:${percent}%"></div></div>
+      ${remaining > 0
+        ? `<div class="muscle-remaining">⚠️ Còn thiếu ${Math.round(remaining)} kcal</div>`
+        : `<div class="muscle-ok">✅ Đạt mục tiêu</div>`}
+    </div>`;
+  }
+  document.getElementById("muscleStatsContainer").innerHTML = html;
+  let deficits = muscleGroups.map(mg => ({ name: mg, remaining: Math.max(0, targetCalPerGroup[mg] - (actualCal[mg] || 0)) }));
+  deficits.sort((a,b) => b.remaining - a.remaining);
+  let top = deficits[0];
+  const el = document.getElementById("muscleSuggestion");
+  if (top && top.remaining > 0) {
+    el.innerHTML = `💡 Hôm nay nên tập trung: <strong>${top.name}</strong> — còn thiếu ${Math.round(top.remaining)} kcal`;
+  } else {
+    el.innerHTML = "🎉 Tuyệt vời! Tất cả nhóm cơ đã đạt mục tiêu tuần.";
+  }
 }
 
-// Hàm lưu và cập nhật toàn bộ
+function updateMuscleGoalStats() { updateMuscleStats(); }
+
+// ==================== SAVE / LOAD ====================
 function saveAppData() {
-    localStorage.setItem("flexifit_v9", JSON.stringify(appData));
-    updateWeeklyGoal();
-    updateMuscleGoalStats();   // cập nhật vùng cơ theo mục tiêu mới
-    renderHistoryTab();
-    updateTodayStats();
+  updateCurrentWeekAchievement();
+  localStorage.setItem("flexifit_v9", JSON.stringify(appData));
+  updateWeeklyGoal();
+  updateMuscleGoalStats();
+  renderHistoryTab();
+  updateTodayStats();
+  drawWeightChart();
+  updateDeloadNotice();
 }
 
-// Load dữ liệu
 function loadAppData() {
-    let raw = localStorage.getItem("flexifit_v9");
-    if (!raw) raw = localStorage.getItem("flexifit_v8");
-    if (raw) {
-        let p = JSON.parse(raw);
-        appData = { ...appData, ...p };
-    }
-    if (!appData.weightHistory)   appData.weightHistory   = [];
-    if (!appData.workoutSessions) appData.workoutSessions = [];
-    if (!appData.weeklyGoal)      appData.weeklyGoal      = { type:"sessions", target:4 };
-    document.getElementById("currentWeightSpan").innerText = appData.currentWeight;
-    document.getElementById("goalType").value  = appData.weeklyGoal.type;
-    document.getElementById("goalValue").value = appData.weeklyGoal.target;
-    updateWeeklyGoal();
-    updateMuscleGoalStats();
-    renderHistoryTab();
-    updateTodayStats();
+  let raw = localStorage.getItem("flexifit_v9") || localStorage.getItem("flexifit_v8");
+  if (raw) {
+    let p = JSON.parse(raw);
+    appData = { ...appData, ...p };
+  }
+  if (!appData.weightHistory)    appData.weightHistory   = [];
+  if (!appData.workoutSessions)  appData.workoutSessions = [];
+  if (!appData.weeklyGoal)       appData.weeklyGoal      = { type:"sessions", target:5 };
+  if (!appData.age)              appData.age             = 35;
+  if (!appData.targetWeight)     appData.targetWeight    = 70;
+  if (!appData.weeklyGoalStatus) appData.weeklyGoalStatus = [];
+  document.getElementById("currentWeightSpan").innerText = appData.currentWeight;
+  document.getElementById("goalType").value  = appData.weeklyGoal.type;
+  document.getElementById("goalValue").value = appData.weeklyGoal.target;
+  document.getElementById("ageInput").value  = appData.age;
+  document.getElementById("targetWeightInput").value = appData.targetWeight;
+  updateWeeklyGoal();
+  updateMuscleGoalStats();
+  renderHistoryTab();
+  updateTodayStats();
+  drawWeightChart();
+  updateDeloadNotice();
 }
 
 function addSession(session) {
-    if (!session.date) session.date = new Date().toISOString().slice(0, 10);
-    appData.workoutSessions.push(session);
-    saveAppData();
+  if (!session.date) session.date = new Date().toISOString().slice(0, 10);
+  appData.workoutSessions.push(session);
+  saveAppData();
 }
 
 function updateTodayStats() {
-    let today = new Date().toISOString().slice(0, 10);
-    let calo = appData.workoutSessions
-        .filter(s => s.date === today)
-        .reduce((acc, s) => acc + (s.totalCalo || 0), 0);
-    document.getElementById("todayCalories").innerText = calo;
+  let today = new Date().toISOString().slice(0, 10);
+  let calo = appData.workoutSessions
+    .filter(s => s.date === today)
+    .reduce((acc, s) => acc + (s.totalCalo || 0), 0);
+  document.getElementById("todayCalories").innerText = calo;
 }
 
-// Hàm render lịch sử với checkbox
-function renderHistoryTab() {
-    const container = document.getElementById("historyList");
-    if (!container) return;
-
-    if (!appData.workoutSessions.length) {
-        container.innerHTML = "<p>Chưa có dữ liệu</p>";
-        return;
-    }
-
-    let html = "";
-    // Duyệt từ mới nhất đến cũ nhất
-    [...appData.workoutSessions].reverse().forEach((session, idx) => {
-        const originalIndex = appData.workoutSessions.length - 1 - idx;
-        html += `
-            <div class="history-item" style="display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #e2e8f0; padding: 12px 0;">
-                <input type="checkbox" class="history-checkbox" data-index="${originalIndex}" style="width: 20px; height: 20px; margin: 0;">
-                <div style="flex:1;">
-                    <strong>${session.date}</strong> — ${session.activityName} (${session.durationMin}') 🔥${session.totalCalo} kcal
-                    ${session.completionRatio ? `✅ ${session.completionRatio}%` : ""}
-                </div>
-            </div>
-        `;
-    });
-    container.innerHTML = html;
-
-    // Gắn sự kiện cho các nút (nếu chưa có)
-    const selectAllBtn = document.getElementById("selectAllHistoryBtn");
-    const deleteSelectedBtn = document.getElementById("deleteSelectedHistoryBtn");
-    const clearAllBtn = document.getElementById("clearHistoryBtn");
-
-    if (selectAllBtn) {
-        selectAllBtn.onclick = () => {
-            document.querySelectorAll(".history-checkbox").forEach(cb => cb.checked = true);
-        };
-    }
-    if (deleteSelectedBtn) {
-        deleteSelectedBtn.onclick = () => {
-            const checkboxes = document.querySelectorAll(".history-checkbox:checked");
-            if (checkboxes.length === 0) {
-                alert("Chưa chọn mục nào.");
-                return;
-            }
-            if (confirm(`Bạn có chắc muốn xóa ${checkboxes.length} mục?`)) {
-                const indicesToDelete = Array.from(checkboxes).map(cb => parseInt(cb.dataset.index));
-                indicesToDelete.sort((a,b) => b - a); // xóa từ cuối lên
-                for (let idx of indicesToDelete) {
-                    appData.workoutSessions.splice(idx, 1);
-                }
-                saveAppData();
-                renderHistoryTab(); // làm mới
-            }
-        };
-    }
-    if (clearAllBtn) {
-        // Loại bỏ sự kiện cũ nếu có
-        clearAllBtn.onclick = () => {
-            if (confirm("Xóa toàn bộ lịch sử?")) {
-                appData.workoutSessions = [];
-                saveAppData();
-                renderHistoryTab();
-            }
-        };
-    }
+function updateDeloadNotice() {
+  const notice = document.getElementById("deloadNotice");
+  if (isDeloadWeek()) {
+    notice.innerHTML = `<div class="deload-badge">🔄 Tuần phục hồi · mục tiêu giảm 40%</div>`;
+  } else {
+    notice.innerHTML = "";
+  }
 }
-
-// Đảm bảo rằng sau khi lưu, gọi renderHistoryTab (trong saveAppData đã có)
-// Nếu trong saveAppData chưa có, hãy thêm dòng: renderHistoryTab();
 
 function updateWeeklyGoal() {
-    let now   = new Date();
-    let start = new Date(now);
-    start.setDate(now.getDate() - now.getDay());
-    start.setHours(0, 0, 0, 0);
-    let weekSessions = appData.workoutSessions.filter(s => new Date(s.date) >= start);
-    let goal    = appData.weeklyGoal;
-    let current = (goal.type === "sessions")
-        ? weekSessions.length
-        : weekSessions.reduce((acc, s) => acc + (s.totalCalo || 0), 0);
-    let percent = goal.target > 0 ? Math.min(100, Math.round((current / goal.target) * 100)) : 0;
-    document.getElementById("goalProgressFill").style.width = percent + "%";
-    document.getElementById("goalProgressFill").innerText   = percent + "%";
-    document.getElementById("goalStatus").innerHTML = `Đạt ${current}/${goal.target} ${goal.type === "sessions" ? "buổi" : "kcal"}`;
+  let now = new Date();
+  let start = new Date(now);
+  start.setDate(now.getDate() - now.getDay());
+  start.setHours(0,0,0,0);
+  let weekSessions = appData.workoutSessions.filter(s => new Date(s.date) >= start);
+  let goal = appData.weeklyGoal;
+  let current = (goal.type === "sessions")
+    ? weekSessions.length
+    : weekSessions.reduce((acc, s) => acc + (s.totalCalo || 0), 0);
+  let percent = goal.target > 0 ? Math.min(100, Math.round((current / goal.target) * 100)) : 0;
+  document.getElementById("goalProgressFill").style.width = percent + "%";
+  document.getElementById("goalStatus").innerHTML = `Đạt <strong style="color:var(--accent)">${current}</strong> / ${goal.target} ${goal.type === "sessions" ? "buổi" : "kcal"} — ${percent}%`;
 }
 
-// ==================== PHẦN BÀI TẬP, THỂ THAO (giữ nguyên logic cũ, chỉ thêm gọi updateMuscleGoalStats) ====================
-const METS = {
-    football_5_goal:4.5, football_5_defender:6.5, football_5_mid:8.5, badminton:5.5,
-    running:7.0, swimming:6.0, gym_free:5.0, walking:3.5, guided_workout:5.0
-};
-const SPORT_NAMES = {
-    football_5_goal:"Bóng đá sân5 (Thủ môn)", football_5_defender:"Bóng đá sân5 (Hậu vệ)",
-    football_5_mid:"Bóng đá sân5 (Tiền vệ)", badminton:"Cầu lông", running:"Chạy bộ",
-    swimming:"Bơi", gym_free:"Tập gym", walking:"Đi bộ nhanh"
-};
-const sportMuscleMap = {
-    football_5_goal: ["Chân-Mông","Core"],
-    football_5_defender: ["Chân-Mông","Core","Ngực-Vai-Tay"],
-    football_5_mid: ["Chân-Mông","Core","Ngực-Vai-Tay","Lưng trên"],
-    badminton: ["Chân-Mông","Core","Ngực-Vai-Tay"],
-    running: ["Chân-Mông","Core"],
-    swimming: ["Chân-Mông","Core","Ngực-Vai-Tay","Lưng trên"],
-    gym_free: ["Ngực-Vai-Tay","Lưng trên","Core"],
-    walking: ["Chân-Mông"]
-};
-
-function calculateCalories(met, weight, minutes) {
-    return Math.round(met * weight * (minutes / 60));
-}
-
-// ==================== THƯ VIỆN BÀI TẬP ====================
+// ==================== EXERCISE LIBRARY ====================
 const exerciseLibrary = {
-    warmup: {
-        name: "🔥 Khởi động toàn thân",
-        guide: "1. Xoay cổ nhẹ nhàng 5 vòng mỗi bên. 2. Xoay vai 10 lần tới, 10 lần lui. 3. Xoay cổ tay, cổ chân 10 vòng. 4. Gập người về trước, tay chạm mắt cá chân (gối hơi cong). 5. Xoay hông 10 vòng. 6. Chạy bước nhẹ tại chỗ 30 giây.",
-        caution: "Không bật nảy, không xoay quá nhanh. Nếu đau lưng, giảm biên độ.",
-        reps: "5 phút",
-        time: 5,
-        muscleGroup: "Toàn thân",
-        kneeRisk: false
-    },
-    cooldown: {
-        name: "🧘 Thả lỏng & căng cơ",
-        guide: "1. Ngồi duỗi chân, cúi người về trước kéo căng đùi sau (30s). 2. Nằm ngửa, ôm gối vào ngực mỗi bên 20s. 3. Căng cơ mông: nằm nghiêng, kéo gối lên ngực. 4. Hít thở sâu 5 nhịp.",
-        caution: "Không kéo căng đến mức đau, từ từ.",
-        reps: "3 phút",
-        time: 3,
-        muscleGroup: "Toàn thân",
-        kneeRisk: false
-    },
-    clam: {
-        name: "🐚 Clam Shell (vỏ sò)",
-        guide: "Nằm nghiêng, gối gập 90°, hai chân chồng lên nhau, đầu tựa lên tay. Giữ hai bàn chân chạm nhau, từ từ mở gối trên lên cao nhất có thể (như vỏ sò mở), giữ 2 giây, hạ chậm. Thở ra khi mở, hít vào khi hạ.",
-        caution: "Không xoay hông hoặc lăn người về sau. Nếu đau hông, giảm biên độ.",
-        reps: "3 hiệp x 12 lần mỗi bên",
-        time: 2.5,
-        muscleGroup: "Chân-Mông",
-        kneeRisk: false
-    },
-    gluteBridge: {
-        name: "🌉 Cầu mông 1 chân",
-        guide: "Nằm ngửa, co gối, bàn chân đặt sát mông, tay xuôi thân. Siết mông nâng hông lên cao sao cho thân thẳng từ vai đến gối. Chân kia duỗi thẳng, giữ 2 giây, hạ chậm. Thở ra khi nâng, hít vào khi hạ.",
-        caution: "Không ưỡn lưng quá mức (lưng dưới không võng). Nếu gối yếu, tập cầu mông 2 chân trước.",
-        reps: "3 hiệp x 10 lần mỗi chân",
-        time: 2.5,
-        muscleGroup: "Chân-Mông",
-        kneeRisk: false
-    },
-    wallSquat: {
-        name: "🧱 Squat tường",
-        guide: "Tựa lưng vào tường, chân đưa ra trước 30-40cm, rộng bằng vai. Trượt lưng xuống dưới đến khi đùi song song mặt đất (hoặc góc 90°). Giữ 2 giây, đẩy người lên. Thở ra khi lên, hít vào khi xuống.",
-        caution: "Gối tuyệt đối không vượt quá mũi chân. Nếu đau, chỉ hạ xuống 45 độ.",
-        reps: "3 hiệp x 12 lần",
-        time: 2.5,
-        muscleGroup: "Chân-Mông",
-        kneeRisk: true // Áp lực tĩnh lên khớp gối khá lớn khi giữ tư thế vuông góc
-    },
-    deadliftTay: {
-        name: "🏋️ Deadlift tạ đơn",
-        guide: "Đứng rộng bằng hông, cầm tạ để trước đùi. Giữ lưng thẳng, hông gập về sau, hạ tạ dọc theo cẳng chân đến dưới đầu gối. Đẩy hông lên về tư thế ban đầu. Thở ra khi đứng lên, hít vào khi hạ.",
-        caution: "Lưng phải thẳng xuyên suốt. Không gù lưng, không khóa gối.",
-        reps: "3 hiệp x 10 lần",
-        time: 3,
-        muscleGroup: "Chân-Mông",
-        kneeRisk: false
-    },
-    bulgarianSquat: {
-        name: "🦵 Bulgarian Split Squat",
-        guide: "Đặt một chân lên ghế/giường cao ngang gối, chân trước bước ra xa. Hạ thấp người cho đến khi gối sau gần chạm sàn, đẩy lên. Thở ra khi lên.",
-        caution: "Gối trước không vượt quá mũi chân, giữ thăng bằng. Có thể không cần tạ.",
-        reps: "3 hiệp x 8 lần mỗi chân",
-        time: 3,
-        muscleGroup: "Chân-Mông",
-        kneeRisk: true
-    },
-    lunges: {
-        name: "🚶 Lunge tại chỗ",
-        guide: "Đứng thẳng, bước một chân dài về trước, hạ gối sau xuống gần chạm sàn (gối trước vuông góc). Đẩy người về tư thế đứng. Đổi bên. Thở ra khi đẩy lên.",
-        caution: "Gối trước không vượt quá mũi chân, không để gối chạm đất mạnh.",
-        reps: "3 hiệp x 10 lần mỗi chân",
-        time: 2.5,
-        muscleGroup: "Chân-Mông",
-        kneeRisk: true
-    },
-    stepUp: {
-        name: "📦 Step-up",
-        guide: "Đứng trước bục cao 20-30cm (bậc thang, ghế chắc chắn). Bước một chân lên bục, đưa chân kia theo, sau đó bước xuống. Đổi chân. Thở ra khi bước lên.",
-        caution: "Không dùng đà, kiểm soát toàn bộ động tác.",
-        reps: "3 hiệp x 10 lần mỗi chân",
-        time: 2.5,
-        muscleGroup: "Chân-Mông",
-        kneeRisk: true
-    },
-    donkeyKick: {
-        name: "🦵 Donkey Kick (đá chân sau)",
-        guide: "Quỳ 4 điểm (hai tay, hai gối). Giữ lưng thẳng, đá một chân lên trần, giữ gối gập 90°. Đỉnh động tác siết mông. Thở ra khi đá lên, hít vào khi hạ.",
-        caution: "Không võng lưng, không xoay hông.",
-        reps: "3 hiệp x 15 lần mỗi chân",
-        time: 2,
-        muscleGroup: "Chân-Mông",
-        kneeRisk: false
-    },
-    sideLegRaise: {
-        name: "🦵 Nâng chân nghiêng",
-        guide: "Nằm nghiêng, chân dưới co nhẹ, chân trên duỗi thẳng. Nâng chân trên lên cao hết mức, giữ 1 giây, hạ chậm. Thở ra khi nâng.",
-        caution: "Không xoay hông về trước. Mũi chân hướng thẳng.",
-        reps: "3 hiệp x 12 lần mỗi bên",
-        time: 2,
-        muscleGroup: "Chân-Mông",
-        kneeRisk: false
-    },
-    squatJump: {
-        name: "🏀 Squat bật nhảy",
-        guide: "Thực hiện squat bình thường, khi đứng lên bật nhẹ khỏi mặt đất. Tiếp đất bằng nửa bàn chân trước, hạ gối mềm.",
-        caution: "Chỉ tập khi gối từ 4-5. Không bật cao quá.",
-        reps: "3 hiệp x 8 lần",
-        time: 2,
-        muscleGroup: "Chân-Mông",
-        kneeRisk: true // Tác động lực mạnh khi tiếp đất
-    },
-    calfRaise: {
-        name: "🦵 Kiễng gót",
-        guide: "Đứng thẳng, kiễng gót lên cao nhất, giữ 1 giây, hạ từ từ. Có thể đứng trên bậc thang để tăng biên độ.",
-        caution: "Giữ thăng bằng, không dùng đà.",
-        reps: "3 hiệp x 15 lần",
-        time: 1.5,
-        muscleGroup: "Chân-Mông",
-        kneeRisk: false
-    },
-    fireHydrant: {
-        name: "🚒 Fire Hydrant",
-        guide: "Quỳ 4 điểm, đưa một chân sang ngang như chó tè, giữ gối gập 90°. Lên cao nhất, siết mông ngoài.",
-        caution: "Lưng thẳng, không nghiêng người.",
-        reps: "3 hiệp x 12 lần mỗi bên",
-        time: 2,
-        muscleGroup: "Chân-Mông",
-        kneeRisk: false
-    },
-    adductorSqueeze: {
-        name: "🦵 Siết đùi trong",
-        guide: "Nằm ngửa, co gối, kẹp một quả bóng hoặc gối giữa hai đầu gối. Siết mạnh, giữ 3 giây, thả lỏng.",
-        caution: "Hít thở đều, không nín thở.",
-        reps: "3 hiệp x 15 lần",
-        time: 2,
-        muscleGroup: "Chân-Mông",
-        kneeRisk: false
-    },
-    reverseLunge: {
-        name: "🔁 Reverse Lunge",
-        guide: "Đứng thẳng, bước một chân ra sau, hạ gối sau chạm nhẹ sàn, đẩy về tư thế đứng.",
-        caution: "Thân trên thẳng, không ngả trước.",
-        reps: "3 hiệp x 10 lần mỗi chân",
-        time: 2.5,
-        muscleGroup: "Chân-Mông",
-        kneeRisk: true
-    },
-    plankKnee: {
-        name: "🧘 Plank từ gối",
-        guide: "Chống hai cẳng tay, gối chạm sàn, mũi chân duỗi. Siết bụng, giữ lưng thẳng từ đầu đến gối. Thở đều.",
-        caution: "Không võng lưng, không nâng mông quá cao.",
-        reps: "3 hiệp x 20-30 giây",
-        time: 2,
-        muscleGroup: "Core",
-        kneeRisk: false
-    },
-    deadbug: {
-        name: "🪲 Dead Bug (bọ chết)",
-        guide: "Nằm ngửa, co gối 90°, tay giơ thẳng lên trần. Từ từ duỗi thẳng chân trái và hạ tay phải xuống sàn (không chạm), sau đó đưa về. Đổi bên. Thở ra khi duỗi tay chân.",
-        caution: "Thắt lưng áp sát sàn xuyên suốt. Nếu cong lưng, giảm biên độ.",
-        reps: "3 hiệp x 8 lần mỗi bên",
-        time: 2.5,
-        muscleGroup: "Core",
-        kneeRisk: false
-    },
-    legRaise: {
-        name: "🦵 Nâng chân đơn",
-        guide: "Nằm ngửa, hai tay xuôi thân hoặc để dưới mông. Nâng một chân lên 45°, giữ 2 giây, hạ chậm. Thở ra khi nâng, hít vào khi hạ.",
-        caution: "Không để lưng cong khỏi sàn. Nếu khó, gập gối lại.",
-        reps: "3 hiệp x 10 lần mỗi chân",
-        time: 2,
-        muscleGroup: "Core",
-        kneeRisk: false
-    },
-    russianTwist: {
-        name: "🔄 Russian Twist (xoay thân)",
-        guide: "Ngồi trên sàn, hơi ngả lưng về sau, hai chân co hoặc duỗi. Xoay thân sang trái, đưa tay chạm sàn bên hông, rồi xoay sang phải. Có thể cầm tạ nhẹ.",
-        caution: "Không xoay quá nhanh, không dùng đà cổ.",
-        reps: "3 hiệp x 12 lần mỗi bên",
-        time: 2.5,
-        muscleGroup: "Core",
-        kneeRisk: false
-    },
-    bicycleCrunch: {
-        name: "🚴 Bicycle Crunch (đạp xe)",
-        guide: "Nằm ngửa, tay đặt sau đầu, nâng vai và chân khỏi sàn. Đưa gối trái về phía khuỷu phải, đồng thời duỗi chân phải. Đổi bên. Thở ra khi xoay.",
-        caution: "Không kéo cổ, dùng bụng để nâng vai.",
-        reps: "3 hiệp x 15 lần mỗi bên",
-        time: 2.5,
-        muscleGroup: "Core",
-        kneeRisk: false
-    },
-    flutterKicks: {
-        name: "🏊 Flutter Kicks (đạp nước)",
-        guide: "Nằm ngửa, hai tay dưới mông, nâng hai chân lên khỏi sàn 15cm, đạp chân lên xuống nhịp nhàng.",
-        caution: "Lưng áp sàn, không nín thở.",
-        reps: "3 hiệp x 20 giây",
-        time: 2,
-        muscleGroup: "Core",
-        kneeRisk: false
-    },
-    hollowHold: {
-        name: "⭐ Hollow Hold (giữ hình lưỡi liềm)",
-        guide: "Nằm ngửa, nâng vai và hai chân khỏi sàn, chỉ có lưng dưới chạm sàn. Giữ tư thế. Thở đều.",
-        caution: "Nếu đau lưng, hạ thấp độ khó (co gối, hạ thấp vai).",
-        reps: "3 hiệp x 15-20 giây",
-        time: 1.5,
-        muscleGroup: "Core",
-        kneeRisk: false
-    },
-    crunch: {
-        name: "💪 Crunch (gập bụng cơ bản)",
-        guide: "Nằm ngửa, co gối, tay đặt sau đầu. Nâng vai và đầu gối lên, siết bụng. Hạ chậm. Thở ra khi nâng.",
-        caution: "Không kéo cổ, cằm cách ngực 1 nắm tay.",
-        reps: "3 hiệp x 15 lần",
-        time: 2,
-        muscleGroup: "Core",
-        kneeRisk: false
-    },
-    reverseCrunch: {
-        name: "⬆️ Reverse Crunch",
-        guide: "Nằm ngửa, tay xuôi thân, nâng hai chân lên vuông góc. Dùng bụng dưới nâng hông lên khỏi sàn, cuộn người về phía ngực.",
-        caution: "Không dùng đà, thực hiện chậm.",
-        reps: "3 hiệp x 12 lần",
-        time: 2,
-        muscleGroup: "Core",
-        kneeRisk: false
-    },
-    sidePlank: {
-        name: "🤸 Side Plank (nghiêng)",
-        guide: "Nằm nghiêng, chống khuỷu tay dưới vai, giữ thân thẳng. Nâng hông lên, giữ 10-20 giây. Đổi bên.",
-        caution: "Không để hông chùng xuống.",
-        reps: "3 hiệp x 15s mỗi bên",
-        time: 2,
-        muscleGroup: "Core",
-        kneeRisk: false
-    },
-    vUp: {
-        name: "📐 V-up",
-        guide: "Nằm ngửa, đồng thời nâng chân và thân trên lên, tay chạm mũi chân (tạo chữ V). Hạ chậm. Thở ra khi nâng.",
-        caution: "Bài khó, có thể thay bằng nâng chân thấp hơn hoặc co gối.",
-        reps: "3 hiệp x 8 lần",
-        time: 2.5,
-        muscleGroup: "Core",
-        kneeRisk: false
-    },
-    mountainClimber: {
-        name: "⛰️ Mountain Climber (leo núi)",
-        guide: "Tư thế plank cao (chống tay thẳng). Đưa gối lần lượt lên ngực, nhanh dần. Thở nhịp nhàng.",
-        caution: "Giữ hông thấp, không nâng mông.",
-        reps: "3 hiệp 20 giây",
-        time: 2,
-        muscleGroup: "Core",
-        kneeRisk: false
-    },
-    toeTap: {
-        name: "👣 Toe Tap (chạm mũi chân)",
-        guide: "Nằm ngửa, co gối 90°, tay xuôi. Hạ lần lượt từng mũi chân chạm sàn rồi nâng lên.",
-        caution: "Giữ thắt lưng áp sàn, bụng siết.",
-        reps: "3 hiệp x 15 lần mỗi chân",
-        time: 2,
-        muscleGroup: "Core",
-        kneeRisk: false
-    },
-    lSitProgress: {
-        name: "📏 L-Sit (nâng chân)",
-        guide: "Ngồi trên sàn, hai tay đặt cạnh hông, nâng hai chân lên khỏi sàn, giữ càng lâu càng tốt.",
-        caution: "Nếu yếu, chỉ nâng một chân.",
-        reps: "3 hiệp x 5-10 giây",
-        time: 1.5,
-        muscleGroup: "Core",
-        kneeRisk: false
-    },
-    pushupKnee: {
-        name: "💪 Hít đất từ gối",
-        guide: "Chống hai tay rộng bằng vai, gối chạm sàn, lưng thẳng. Hạ ngực xuống gần sàn, đẩy lên. Thở ra khi đẩy.",
-        caution: "Khuỷu tay xuôi theo thân, không xòe rộng quá.",
-        reps: "3 hiệp x 8-10 lần",
-        time: 2,
-        muscleGroup: "Ngực-Vai-Tay",
-        kneeRisk: false
-    },
-    pushupFull: {
-        name: "💪 Hít đất chuẩn",
-        guide: "Tư thế plank thẳng chân, hạ ngực chạm sàn, đẩy lên. Giữ lưng thẳng xuyên suốt.",
-        caution: "Nếu chưa đủ sức, vẫn tập từ gối trước.",
-        reps: "3 hiệp x 5-8 lần",
-        time: 2.5,
-        muscleGroup: "Ngực-Vai-Tay",
-        kneeRisk: false
-    },
-    overheadPress: {
-        name: "🏋️ Overhead Press với tạ",
-        guide: "Đứng, cầm tạ ngang vai, đẩy lên cao hết tay, hạ về vai. Thở ra khi đẩy.",
-        caution: "Không ưển lưng, siết bụng khi đẩy.",
-        reps: "3 hiệp x 8-10 lần",
-        time: 2.5,
-        muscleGroup: "Ngực-Vai-Tay",
-        kneeRisk: false
-    },
-    lateralRaise: {
-        name: "✈️ Lateral Raise (giơ ngang vai)",
-        guide: "Cầm tạ nhẹ, đứng hơi cúi người, giơ tay sang ngang đến ngang vai, hạ chậm.",
-        caution: "Không dùng đà, không đưa tay quá cao.",
-        reps: "3 hiệp x 12 lần",
-        time: 2,
-        muscleGroup: "Ngực-Vai-Tay",
-        kneeRisk: false
-    },
-    frontRaise: {
-        name: "⬆️ Front Raise (giơ trước)",
-        guide: "Cầm tạ, giơ thẳng tay ra trước lên ngang vai, hạ chậm.",
-        caution: "Lưng thẳng, không dùng lực bật.",
-        reps: "3 hiệp x 12 lần",
-        time: 2,
-        muscleGroup: "Ngực-Vai-Tay",
-        kneeRisk: false
-    },
-    bicepCurl: {
-        name: "💪 Bicep Curl (cuốn tạ)",
-        guide: "Đứng, cầm tạ, cuốn tạ lên vai (lòng bàn tay hướng lên), khuỷu cố định.",
-        caution: "Không đung đưa thân, chỉ gập khuỷu.",
-        reps: "3 hiệp x 10 lần",
-        time: 2,
-        muscleGroup: "Ngực-Vai-Tay",
-        kneeRisk: false
-    },
-    tricepsDip: {
-        name: "💪 Triceps Dip (dips ghế)",
-        guide: "Tay tựa vào ghế phía sau, chân duỗi về trước, hạ người xuống đến khuỷu 90°, đẩy lên.",
-        caution: "Vai không nhún, không hạ quá sâu gây đau vai.",
-        reps: "3 hiệp x 10 lần",
-        time: 2.5,
-        muscleGroup: "Ngực-Vai-Tay",
-        kneeRisk: false
-    },
-    diamondPushup: {
-        name: "💎 Diamond Pushup (hít đất kim cương)",
-        guide: "Chống hai tay chụm hình kim cương dưới ngực, hít đất, tác động cơ tay sau.",
-        caution: "Bài khó, tập từ gối nếu chưa đủ sức.",
-        reps: "3 hiệp x 5-8 lần",
-        time: 2,
-        muscleGroup: "Ngực-Vai-Tay",
-        kneeRisk: false
-    },
-    pikePushup: {
-        name: "🔺 Pike Pushup (hít đất chữ V)",
-        guide: "Tư thế chữ V ngược (mông cao), hạ đầu gần chạm sàn, đẩy lên. Tác động vai.",
-        caution: "Không gập khuỷu quá sâu.",
-        reps: "3 hiệp x 8 lần",
-        time: 2.5,
-        muscleGroup: "Ngực-Vai-Tay",
-        kneeRisk: false
-    },
-    floorPress: {
-        name: "🏋️ Floor Press (nằm đẩy tạ)",
-        guide: "Nằm ngửa, co gối, cầm tạ. Hạ đến khuỷu chạm sàn, đẩy lên.",
-        caution: "Không bật tạ, kiểm soát.",
-        reps: "3 hiệp x 10 lần",
-        time: 2.5,
-        muscleGroup: "Ngực-Vai-Tay",
-        kneeRisk: false
-    },
-    arnoldPress: {
-        name: "💪 Arnold Press",
-        guide: "Cầm tạ ngang vai (lòng bàn tay hướng vào mặt), khi đẩy lên thì xoay cổ tay ra ngoài chậm rãi.",
-        caution: "Xoay chậm, không giật.",
-        reps: "3 hiệp x 8 lần",
-        time: 2.5,
-        muscleGroup: "Ngực-Vai-Tay",
-        kneeRisk: false
-    },
-    shrugs: {
-        name: "📈 Shrugs (nhún vai)",
-        guide: "Cầm tạ, nhún vai lên cao nhất, giữ 1 giây, hạ. Chỉ nhún thẳng lên, tác động cơ thang.",
-        caution: "Không xoay vai.",
-        reps: "3 hiệp x 12 lần",
-        time: 1.5,
-        muscleGroup: "Ngực-Vai-Tay",
-        kneeRisk: false
-    },
-    wristCurl: {
-        name: "✊ Wrist Curl (gập cổ tay)",
-        guide: "Ngồi, đặt cẳng tay lên đùi, cầm tạ, gập cổ tay lên rồi hạ.",
-        caution: "Cổ tay thẳng, không gập quá mức.",
-        reps: "3 hiệp x 15 lần",
-        time: 1.5,
-        muscleGroup: "Ngực-Vai-Tay",
-        kneeRisk: false
-    },    rowTay: {
-        name: "⛵ Hàng tạ 1 tay",
-        guide: "Tựa một tay và đầu gối lên ghế/giường, lưng thẳng. Tay cầm tạ kéo về hông, khuỷu ép sát người.",
-        caution: "Không xoay thân, không dùng đà.",
-        reps: "3 hiệp x 10 lần mỗi tay",
-        time: 3,
-        muscleGroup: "Lưng trên",
-        kneeRisk: false
-    },
-    pullupHang: {
-        name: "🧗 Treo xà",
-        guide: "Nắm xà rộng bằng vai, treo người thả lỏng, siết bụng nhẹ. Cố gắng giữ càng lâu càng tốt.",
-        caution: "Không buông tay đột ngột, hạ chậm.",
-        reps: "2 hiệp x 15-20 giây",
-        time: 1.5,
-        muscleGroup: "Lưng trên",
-        kneeRisk: false
-    },
-    superman: {
-        name: "🦸 Superman (siêu nhân)",
-        guide: "Nằm sấp, tay duỗi thẳng trước, chân duỗi. Nâng tay, chân và ngực lên cùng lúc khỏi sàn, giữ 2 giây, hạ. Thở ra khi nâng.",
-        caution: "Nhìn xuống sàn, không ngửa cổ quá.",
-        reps: "3 hiệp x 10 lần",
-        time: 2,
-        muscleGroup: "Lưng trên",
-        kneeRisk: false
-    },
-    bentOverRow: {
-        name: "🔱 Bent-over Row 2 tay",
-        guide: "Cúi người về trước lưng thẳng, hai tay cầm tạ, kéo tạ về bụng dưới, siết xô. Thở ra khi kéo.",
-        caution: "Không gù lưng, không đung đưa.",
-        reps: "3 hiệp x 10 lần",
-        time: 2.5,
-        muscleGroup: "Lưng trên",
-        kneeRisk: false
-    },
-    reverseFly: {
-        name: "🦅 Reverse Fly (xòe cánh ngược)",
-        guide: "Cúi người, cầm tạ nhẹ, giơ tay sang ngang đến ngang vai, siết lưng trên.",
-        caution: "Khuỷu hơi cong, không khóa tay.",
-        reps: "3 hiệp x 12 lần",
-        time: 2,
-        muscleGroup: "Lưng trên",
-        kneeRisk: false
-    },
-    towelRow: {
-        name: "🧣 Towel Row (hàng khăn)",
-        guide: "Ngồi, chân duỗi, vắt khăn qua bàn chân, hai tay kéo khăn về phía ngực, lưng thẳng.",
-        caution: "Lưng thẳng, không gù.",
-        reps: "3 hiệp x 12 lần",
-        time: 2,
-        muscleGroup: "Lưng trên",
-        kneeRisk: false
-    },
-    cobraStretch: {
-        name: "🐍 Cobra Stretch (căng cơ lưng)",
-        guide: "Nằm sấp, chống tay nâng ngực lên, giữ 15 giây. Hít thở sâu.",
-        caution: "Không hạ thấp lưng quá mức.",
-        reps: "3 hiệp x 15 giây",
-        time: 1.5,
-        muscleGroup: "Lưng trên",
-        kneeRisk: false
-    },
-    scapularPushup: {
-        name: "🦴 Scapular Pushup (hít đất xô)",
-        guide: "Tư thế plank tay thẳng, co xô lại (xương bả vai ép vào nhau) rồi đẩy ra. Không gập khuỷu tay.",
-        caution: "Chỉ cử động xô.",
-        reps: "3 hiệp x 10 lần",
-        time: 2,
-        muscleGroup: "Lưng trên",
-        kneeRisk: false
-    },
-    superman2: {
-        name: "🦸 Superman biến thể",
-        guide: "Nằm sấp, chỉ nâng một tay và chân đối diện lên, hạ xuống rồi đổi bên.",
-        caution: "Nhìn thẳng xuống sàn.",
-        reps: "3 hiệp x 8 lần mỗi bên",
-        time: 2,
-        muscleGroup: "Lưng trên",
-        kneeRisk: false
-    },
-    ytwRaise: {
-        name: "✋ YTW Raise",
-        guide: "Nằm sấp, nâng tay lên thành chữ Y giữ 2s, rồi hạ xuống chuyển sang dạng chữ T, rồi chữ W.",
-        caution: "Nhẹ nhàng, kiểm soát bằng cơ lưng trên.",
-        reps: "Mỗi chữ 5 lần",
-        time: 2,
-        muscleGroup: "Lưng trên",
-        kneeRisk: false
-    },
-    highKnees: {
-        name: "🏃 Chạy bước cao tại chỗ",
-        guide: "Đứng thẳng, nâng gối lên ngang hông, chạy nhẹ nhàng tại chỗ. Thở đều.",
-        caution: "Tiếp đất bằng nửa bàn chân trước, không đập gót chân.",
-        reps: "4 hiệp x 20 giây",
-        time: 2,
-        muscleGroup: "Toàn thân",
-        kneeRisk: false // Với biên độ nhẹ nhịp nhàng, tải trọng động không quá lớn, nhưng nếu gối đang chấn thương nặng cần chú ý.
-    },
-    jumpingJack: {
-        name: "🦘 Jumping Jack (nhảy dù)",
-        guide: "Bật nhảy dang tay chân, thu về nhịp nhàng.",
-        caution: "Gối yếu thì bước dang chân sang bên thay vì nhảy.",
-        reps: "3 hiệp x 15 lần",
-        time: 2,
-        muscleGroup: "Toàn thân",
-        kneeRisk: true // Chuyển động nhảy dang ngang có lực cản tác động trực tiếp lên gối chéo.
-    },
-    burpeeLight: {
-        name: "🏃‍♂️ Burpee nhẹ (bỏ nhảy)",
-        guide: "Từ tư thế đứng, chống tay xuống sàn, lùi chân ra tư thế plank, sau đó bước từng chân về và đứng dậy. Không bật nhảy.",
-        caution: "Tập chậm để bảo vệ khớp gối.",
-        reps: "3 hiệp x 6-8 lần",
-        time: 2.5,
-        muscleGroup: "Toàn thân",
-        kneeRisk: true // Việc gập gối sâu khi chống tay/thu chân vẫn tạo một áp lực lớn lên khớp gối mạn tính.
-    },
-    sumoSquat: {
-        name: "🦿 Sumo Squat",
-        guide: "Đứng rộng hơn vai, mũi chân hướng ra ngoài 45°. Hạ hông xuống sâu nhất có thể, giữ lưng thẳng, đẩy người lên bằng gót chân. Thở ra khi lên.",
-        caution: "Gối phải mở rộng theo hướng mũi chân, không để gối sụp vào trong.",
-        reps: "3 hiệp x 12 lần",
-        time: 2.5,
-        muscleGroup: "Chân-Mông",
-        kneeRisk: true
-    },
-    gluteBridgeHold: {
-        name: "🌉 Cầu mông giữ tĩnh",
-        guide: "Nằm ngửa, co gối, nâng hông lên cao tạo thành đường thẳng từ vai đến gối. Siết chặt mông và giữ nguyên tư thế, hít thở đều.",
-        caution: "Không ưỡn lưng dưới quá mức gây đau lưng.",
-        reps: "3 hiệp x 30 giây",
-        time: 2,
-        muscleGroup: "Chân-Mông",
-        kneeRisk: false
-    },
-    curtsyLunge: {
-        name: "💃 Curtsy Lunge (Lunge chéo chân)",
-        guide: "Đứng thẳng, bước chân trái chéo ra sau về phía bên phải (như tư thế chào hoàng gia). Hạ gối xuống vuông góc rồi đẩy về. Đổi bên.",
-        caution: "Giữ hông hướng về phía trước, không vặn vẹo khớp gối.",
-        reps: "3 hiệp x 10 lần mỗi bên",
-        time: 3,
-        muscleGroup: "Chân-Mông",
-        kneeRisk: true
-    },
-    frogPump: {
-        name: "🐸 Frog Pump (Cầu mông ếch)",
-        guide: "Nằm ngửa, áp hai lòng bàn chân vào nhau, mở rộng gối sang hai bên. Siết mông nâng hông lên khỏi sàn rồi hạ chạm nhẹ.",
-        caution: "Tập trung lực vào mông, không dùng lưng dưới để đẩy.",
-        reps: "3 hiệp x 15 lần",
-        time: 2,
-        muscleGroup: "Chân-Mông",
-        kneeRisk: false
-    },
-    sideLunge: {
-        name: "🦀 Side Lunge (Lunge ngang)",
-        guide: "Đứng thẳng, bước rộng chân trái sang ngang, hạ hông và gập gối trái (chân phải duỗi thẳng). Đẩy mạnh chân trái về vị trí cũ.",
-        caution: "Giữ gót chân bám sàn, hông đẩy ra sau như squat.",
-        reps: "3 hiệp x 10 lần mỗi bên",
-        time: 2.5,
-        muscleGroup: "Chân-Mông",
-        kneeRisk: true
-    },
-    rainbowKicks: {
-        name: "🌈 Rainbow Kicks (Đá chân cầu vồng)",
-        guide: "Quỳ 4 điểm, duỗi thẳng một chân ra sau. Nâng chân lên cao rồi vẽ một đường vòng cung sang trái, chạm sàn, rồi vẽ ngược sang phải.",
-        caution: "Giữ cố định thân trên và hông, không lắc lư người.",
-        reps: "3 hiệp x 12 lần mỗi bên",
-        time: 2.5,
-        muscleGroup: "Chân-Mông",
-        kneeRisk: false
-    },
-    monsterWalk: {
-        name: "👹 Monster Walk (Đi bộ quái vật)",
-        guide: "Hạ người xuống tư thế nửa squat, hai chân rộng bằng vai. Bước từng bước nhỏ tiến về trước rồi lùi lại, giữ nguyên độ cao của hông.",
-        caution: "Không đứng thẳng dậy trong suốt bài tập.",
-        reps: "3 hiệp x 20 bước",
-        time: 2,
-        muscleGroup: "Chân-Mông",
-        kneeRisk: true
-    },
-    singleLegDeadliftBody: {
-        name: "🧍 Deadlift 1 chân tay không",
-        guide: "Đứng thẳng, trụ bằng một chân. Gập người về trước từ hông, đồng thời đá chân còn lại ra sau sao cho thân người song song sàn.",
-        caution: "Giữ thăng bằng, lưng thẳng, gối chân trụ hơi trùng nhẹ.",
-        reps: "3 hiệp x 8 lần mỗi chân",
-        time: 2.5,
-        muscleGroup: "Chân-Mông",
-        kneeRisk: false
-    },
-    wallSit: {
-        name: "🧘 Giữ tĩnh dựa tường (Wall Sit)",
-        guide: "Tựa lưng sát vào tường, hạ người xuống cho đến khi đùi vuông góc với cẳng chân (như ngồi ghế). Giữ nguyên vị trí.",
-        caution: "Đùi song song với sàn, không để mông thấp hơn gối.",
-        reps: "3 hiệp x 30 giây",
-        time: 2,
-        muscleGroup: "Chân-Mông",
-        kneeRisk: true
-    },
-    kneelingSquat: {
-        name: "🧎 Squat quỳ",
-        guide: "Quỳ hai gối trên thảm, hạ mông xuống chạm gót chân, sau đó dùng cơ mông đẩy thẳng người dậy, siết mạnh mông ở đỉnh.",
-        caution: "Nên lót thảm dày để bảo vệ xương bánh chè.",
-        reps: "3 hiệp x 15 lần",
-        time: 2,
-        muscleGroup: "Chân-Mông",
-        kneeRisk: false
-    },
-    lateralLegWalk: {
-        name: "🦀 Đi bộ ngang (Lateral Walk)",
-        guide: "Hơi trùng gối nhẹ, bước liên tục sang trái 10 bước rồi bước ngược lại sang phải 10 bước.",
-        caution: "Giữ khoảng cách hai chân luôn rộng bằng hông.",
-        reps: "3 hiệp x 20 bước",
-        time: 2,
-        muscleGroup: "Chân-Mông",
-        kneeRisk: false
-    },
-    singleLegCalfRaise: {
-        name: "🦿 Kiễng gót 1 chân",
-        guide: "Co một chân lên, chân còn lại đứng thẳng và thực hiện kiễng gót lên cao nhất có thể. Hạ chậm. Đổi bên.",
-        caution: "Có thể bám nhẹ vào tường để giữ thăng bằng.",
-        reps: "3 hiệp x 12 lần mỗi chân",
-        time: 2,
-        muscleGroup: "Chân-Mông",
-        kneeRisk: false
-    },
-    plankTap: {
-        name: "🪵 Plank chạm vai",
-        guide: "Tư thế plank cao (chống tay thẳng). Nhấc tay trái chạm vào vai phải, hạ xuống rồi đổi bên tay phải chạm vai trái.",
-        caution: "Siết bụng chặt, không để hông bị lắc lư hay xoay theo tay.",
-        reps: "3 hiệp x 10 lần mỗi bên",
-        time: 2,
-        muscleGroup: "Core",
-        kneeRisk: false
-    },
-    birdDog: {
-        name: "🦅 Bird Dog",
-        guide: "Quỳ 4 điểm. Nâng và duỗi thẳng tay phải về trước đồng thời đá chân trái ra sau. Thu về đổi bên đối diện.",
-        caution: "Tạo đường thẳng từ tay đến chân, không ngửa cổ.",
-        reps: "3 hiệp x 10 lần mỗi bên",
-        time: 2.5,
-        muscleGroup: "Core",
-        kneeRisk: false
-    },
-    obliqueCrunch: {
-        name: "🔄 Gập bụng chéo",
-        guide: "Nằm ngửa, co gối, đặt cẳng chân trái lên đầu gối phải. Đặt tay phải sau đầu, gập vai phải về phía đầu gối trái.",
-        caution: "Không dùng tay kéo cổ, hãy dùng cơ bụng xéo để kéo vai lên.",
-        reps: "3 hiệp x 12 lần mỗi bên",
-        time: 2.5,
-        muscleGroup: "Core",
-        kneeRisk: false
-    },
-    inchworm: {
-        name: "🐛 Sâu đo (Inchworm)",
-        guide: "Đứng thẳng, gập người dùng hai tay đi bộ về trước đến tư thế plank, sau đó đi bộ hai tay ngược về vị trí đứng thẳng.",
-        caution: "Giữ chân thẳng nhất có thể, nếu cơ đùi sau quá căng có thể hơi trùng gối.",
-        reps: "3 hiệp x 8 lần",
-        time: 2.5,
-        muscleGroup: "Core",
-        kneeRisk: false
-    },
-    bodySaw: {
-        name: "🪚 Plank cưa máy",
-        guide: "Tư thế plank cẳng tay. Dùng mũi chân đẩy toàn bộ thân người tiến về trước vài cm rồi kéo ngược ra sau.",
-        caution: "Giữ lưng thẳng như một tấm ván, không xệ hông.",
-        reps: "3 hiệp x 12 lần",
-        time: 2,
-        muscleGroup: "Core",
-        kneeRisk: false
-    },
-    heelsTouch: {
-        name: "🐧 Chạm gót chân (Penguin)",
-        guide: "Nằm ngửa co gối, nhấc nhẹ vai khỏi sàn. Nghiêng người sang trái để tay trái chạm gót trái, rồi nghiêng sang phải chạm gót phải.",
-        caution: "Giữ vai luôn rời sàn trong suốt hiệp tập.",
-        reps: "3 hiệp x 15 lần mỗi bên",
-        time: 2,
-        muscleGroup: "Core",
-        kneeRisk: false
-    },
-    plankHipDips: {
-        name: "🔄 Plank xoay hông",
-        guide: "Tư thế plank cẳng tay. Xoay hông sang bên trái chạm gần sàn, sau đó xoay ngược sang bên phải.",
-        caution: "Cơ bụng luôn siết, không để thắt lưng chịu lực.",
-        reps: "3 hiệp x 10 lần mỗi bên",
-        time: 2,
-        muscleGroup: "Core",
-        kneeRisk: false
-    },
-    scissorsKicks: {
-        name: "✂️ Đá chân kéo cắt",
-        guide: "Nằm ngửa, tay dưới mông, nhấc hai chân lên cách sàn 20cm. Mở rộng hai chân sang hai bên rồi bắt chéo chúng lại với nhau.",
-        caution: "Thắt lưng ép chặt xuống sàn, không để hở lưng.",
-        reps: "3 hiệp x 20 giây",
-        time: 2,
-        muscleGroup: "Core",
-        kneeRisk: false
-    },
-    bearCrawlHold: {
-        name: "🐻 Giữ tĩnh tư thế gấu",
-        guide: "Quỳ 4 điểm, sau đó nhấc hai đầu gối lên cách mặt sàn khoảng 5cm. Giữ nguyên tư thế và thở đều.",
-        caution: "Gối chỉ mấp mé mặt sàn, không nâng mông quá cao.",
-        reps: "3 hiệp x 20-30 giây",
-        time: 1.5,
-        muscleGroup: "Core",
-        kneeRisk: false
-    },
-    windshieldWipers: {
-        name: "🧹 Gạt nước mưa",
-        guide: "Nằm ngửa, hai tay giang ngang, giơ hai chân thẳng lên trần vuông góc. Hạ hai chân sang trái rồi lại đưa lên hạ sang phải.",
-        caution: "Nếu quá nặng, có thể gập gối 90° để thực hiện.",
-        reps: "3 hiệp x 8 lần mỗi bên",
-        time: 2.5,
-        muscleGroup: "Core",
-        kneeRisk: false
-    },
-    sidePlankDips: {
-        name: "🤸 Side Plank nhấp hông",
-        guide: "Tư thế Side Plank. Từ từ hạ hông xuống gần chạm thảm rồi dùng cơ bụng liên sườn đẩy hông lên cao hơn mức ban đầu.",
-        caution: "Thực hiện chậm, kiểm soát cơ sườn.",
-        reps: "3 hiệp x 10 lần mỗi bên",
-        time: 2.5,
-        muscleGroup: "Core",
-        kneeRisk: false
-    },
-    sevensCrunch: {
-        name: "🔢 Gập bụng ngắn (Pulse Crunch)",
-        guide: "Nằm ngửa co gối, nhấc vai lên khỏi sàn và thực hiện nhấp bụng liên tục trong biên độ cực nhỏ ở đỉnh động tác.",
-        caution: "Không hạ vai hẳn xuống sàn cho đến khi hết hiệp.",
-        reps: "3 hiệp x 20 lần",
-        time: 1.5,
-        muscleGroup: "Core",
-        kneeRisk: false
-    },
-
-    // ========== NGỰC - VAI - TAY (BỔ SUNG) ==========
-    inclinePushup: {
-        name: "🪜 Hít đất dốc lên",
-        guide: "Đặt hai tay lên bục cao (ghế, giường, bậc thang), chân lùi ra sau tạo thế plank. Hạ ngực chạm cạnh bục rồi đẩy lên.",
-        caution: "Giữ thân người thẳng, bài này nhẹ hơn hít đất dưới sàn.",
-        reps: "3 hiệp x 10-12 lần",
-        time: 2,
-        muscleGroup: "Ngực-Vai-Tay",
-        kneeRisk: false
-    },
-    declinePushup: {
-        name: "🪜 Hít đất dốc xuống",
-        guide: "Đặt hai chân lên ghế/giường, hai tay chống dưới sàn. Hạ ngực xuống gần sàn rồi đẩy lên. Tác động ngực trên.",
-        caution: "Bài tập nâng cao, siết core chặt để tránh võng lưng.",
-        reps: "3 hiệp x 6-8 lần",
-        time: 2.5,
-        muscleGroup: "Ngực-Vai-Tay",
-        kneeRisk: false
-    },
-    hammerCurl: {
-        name: "🔨 Cuốn tạ kiểu búa",
-        guide: "Đứng thẳng, cầm tạ sao cho lòng bàn tay hướng vào nhau. Cuốn tạ lên vai giữ nguyên hướng lòng bàn tay, hạ chậm.",
-        caution: "Cố định khuỷu tay sát sườn, không đung đưa vai.",
-        reps: "3 hiệp x 12 lần",
-        time: 2,
-        muscleGroup: "Ngực-Vai-Tay",
-        kneeRisk: false
-    },
-    tricepsExtension: {
-        name: "💪 Duỗi tay sau qua đầu",
-        guide: "Đứng hoặc ngồi, hai tay cùng cầm một quả tạ đưa thẳng qua đầu. Gập khuỷu tay hạ tạ ra sau gáy, rồi duỗi thẳng tay lên.",
-        caution: "Giữ hai khuỷu tay khép gần tai, không mở rộng sang hai bên.",
-        reps: "3 hiệp x 10 lần",
-        time: 2,
-        muscleGroup: "Ngực-Vai-Tay",
-        kneeRisk: false
-    },
-    aroundTheWorld: {
-        name: "🌍 Xoay tạ vòng quanh thế giới",
-        guide: "Nằm ngửa trên sàn, hai tay cầm tạ nhẹ để dọc thân (lòng bàn tay ngửa). Vẽ một đường vòng cung trên sàn đưa tạ lên qua đầu.",
-        caution: "Di chuyển chậm, kiểm soát cơ vai.",
-        reps: "3 hiệp x 10 lần",
-        time: 2.5,
-        muscleGroup: "Ngực-Vai-Tay",
-        kneeRisk: false
-    },
-    tricepsKickback: {
-        name: "💪 Đá tay sau với tạ",
-        guide: "Cúi người lưng thẳng, khuỷu tay co áp sát sườn. Duỗi thẳng cánh tay ra phía sau, siết chặt cơ tay sau, trả về tư thế co.",
-        caution: "Chỉ di chuyển cẳng tay, phần cánh tay từ vai đến khuỷu giữ cố định.",
-        reps: "3 hiệp x 12 lần mỗi bên",
-        time: 2.5,
-        muscleGroup: "Ngực-Vai-Tay",
-        kneeRisk: false
-    },
-    commanderPushup: {
-        name: "🪵 Plank cao xuống thấp (Commando)",
-        guide: "Bắt đầu từ tư thế plank cao. Hạ lần lượt từng cẳng tay xuống thành plank thấp, rồi lại chống tay đẩy người về plank cao.",
-        caution: "Hạn chế tối đa việc lắc hông khi chuyển đổi tư thế.",
-        reps: "3 hiệp x 8 lần mỗi bên",
-        time: 2.5,
-        muscleGroup: "Ngực-Vai-Tay",
-        kneeRisk: false
-    },
-    shoulderTapPlank: {
-        name: " Plank cao giơ tay trước",
-        guide: "Tư thế plank cao, từ từ nhấc một tay duỗi thẳng ra trước song song sàn. Hạ xuống đổi bên.",
-        caution: "Siết mông và bụng để giữ người cân bằng.",
-        reps: "3 hiệp x 10 lần mỗi bên",
-        time: 2,
-        muscleGroup: "Ngực-Vai-Tay",
-        kneeRisk: false
-    },
-    isometricChestSqueeze: {
-        name: "🙏 Ép ngực tĩnh",
-        guide: "Đứng thẳng, áp hai lòng bàn chân hoặc hai lòng bàn tay vào nhau trước ngực. Dùng hết lực ép mạnh chúng vào nhau trong 5 giây rồi thả lỏng.",
-        caution: "Hít thở đều, tập trung cảm nhận cơ ngực gồng chặt.",
-        reps: "3 hiệp x 6 lần (giữ 5s/lần)",
-        time: 1.5,
-        muscleGroup: "Ngực-Vai-Tay",
-        kneeRisk: false
-    },
-
-    // ========== LƯNG TRÊN (BỔ SUNG) ==========
-    renegadeRow: {
-        name: "🚣 Hít đất kéo tạ",
-        guide: "Tư thế plank cao với hai tay cầm hai quả tạ đơn đặt trên sàn. Giữ vững người, kéo một tay mang tạ lên hông, hạ xuống đổi bên.",
-        caution: "Hai chân mở rộng hơn bình thường một chút để giữ thăng bằng tốt hơn.",
-        reps: "3 hiệp x 8 lần mỗi tay",
-        time: 3,
-        muscleGroup: "Lưng trên",
-        kneeRisk: false
-    },
-    wRaise: {
-        name: "👐 Nằm sấp giơ chữ W",
-        guide: "Nằm sấp, hai tay co lại tạo thành chữ W. Nâng ngực và hai tay lên khỏi sàn, ép chặt xương bả vai ra sau trong 2 giây.",
-        caution: "Nhìn xuống sàn để bảo vệ đốt sống cổ.",
-        reps: "3 hiệp x 12 lần",
-        time: 2,
-        muscleGroup: "Lưng trên",
-        kneeRisk: false
-    },
-    proneSnowAngels: {
-        name: "😇 Thiên thần tuyết nằm sấp",
-        guide: "Nằm sấp, nâng nhẹ tay và chân khỏi sàn. Di chuyển hai tay từ hông vẽ một vòng cung lớn lên qua đầu (tay không chạm thảm).",
-        caution: "Di chuyển chậm, cảm nhận toàn bộ phần lưng trên hoạt động.",
-        reps: "3 hiệp x 10 lần",
-        time: 2,
-        muscleGroup: "Lưng trên",
-        kneeRisk: false
-    },
-    goodMorning: {
-        name: "☀️ Chào buổi sáng (Good Morning)",
-        guide: "Đứng thẳng, hai tay đặt sau đầu. Giữ lưng thẳng, gập người từ hông về phía trước đến khi thân người gần song song sàn, đẩy lên.",
-        caution: "Gối chỉ trùng nhẹ, chuyển động hoàn toàn bằng hông.",
-        reps: "3 hiệp x 12 lần",
-        time: 2.5,
-        muscleGroup: "Lưng trên",
-        kneeRisk: false
-    },
-    scapularPullup: {
-        name: "🧗 Kéo xà bả vai",
-        guide: "Treo người trên xà thẳng tay. Không gập khuỷu tay, dùng cơ lưng xô co xương bả vai để nâng người lên một chút, hạ xuống.",
-        caution: "Giữ tay thẳng hoàn toàn trong suốt bài tập.",
-        reps: "3 hiệp x 8 lần",
-        time: 2,
-        muscleGroup: "Lưng trên",
-        kneeRisk: false
-    },
-    backExtensionFloor: {
-        name: "🧜 Nâng thân trên nằm sấp",
-        guide: "Nằm sấp, hai tay đặt sau gáy hoặc thái dương, chân cố định trên sàn. Dùng cơ lưng dưới nâng ngực lên cao, hạ xuống.",
-        caution: "Không dùng lực quán tính giật người lên quá cao.",
-        reps: "3 hiệp x 12 lần",
-        time: 2,
-        muscleGroup: "Lưng trên",
-        kneeRisk: false
-    },
-    doorwayRow: {
-        name: "🚪 Kéo lưng ở mép cửa",
-        guide: "Đứng đối diện mép cửa, hai tay bám chắc vào khung cửa, chân tiến sát vào trong. Ngả người ra sau hết cỡ rồi dùng cơ lưng kéo người sát vào khung cửa.",
-        caution: "Chọn khung cửa chắc chắn, chân bám sàn không trơn trượt.",
-        reps: "3 hiệp x 12 lần",
-        time: 2,
-        muscleGroup: "Lưng trên",
-        kneeRisk: false
-    },
-
-    // ========== TOÀN THÂN & CARDIO NHẸ (BỔ SUNG) ==========
-    skaterHops: {
-        name: "⛸️ Nhảy trượt băng (Skater)",
-        guide: "Nhảy bật ngang sang trái, tiếp đất bằng chân trái đồng thời đưa chân phải chéo ra sau. Sau đó bật ngược lại sang phải.",
-        caution: "Tiếp đất bằng mũi chân, hạ gối mềm mại để giảm chấn động.",
-        reps: "3 hiệp x 30 giây",
-        time: 2,
-        muscleGroup: "Toàn thân",
-        kneeRisk: true
-    },
-    stepJacks: {
-        name: "🚶 Step Jacks (Jumping Jack không nhảy)",
-        guide: "Đứng thẳng. Bước chân trái sang ngang đồng thời giơ hai tay lên cao qua đầu. Thu về và đổi sang bước chân phải.",
-        caution: "Bài tập thay thế hoàn hảo cho Jumping Jack nếu bạn bị đau gối mạn tính.",
-        reps: "3 hiệp x 20 lần",
-        time: 2,
-        muscleGroup: "Toàn thân",
-        kneeRisk: false
-    },
-    buttKicks: {
-        name: "🏃 Chạy gót chạm mông tại chỗ",
-        guide: "Đứng thẳng, chạy nhẹ nhàng tại chỗ sao cho gót chân bật ra sau chạm vào mông. Thở đều theo nhịp.",
-        caution: "Tiếp đất bằng nửa bàn chân trước để bảo vệ khớp gối.",
-        reps: "3 hiệp x 30 giây",
-        time: 2,
-        muscleGroup: "Toàn thân",
-        kneeRisk: true // Chuyển động gập gối nhanh liên tục tạo áp lực động cho khớp gối.
-    },
-    shadowBox: {
-        name: "🥊 Đấm bốc đối kháng không khí",
-        guide: "Đứng thế thủ boxing, thực hiện các cú đấm thẳng (Jab/Cross) và đấm vòng liên tục vào không trung, di chuyển chân nhẹ nhàng.",
-        caution: "Siết bụng và không khóa thẳng đờ khớp khuỷu tay khi ra đòn.",
-        reps: "3 hiệp x 45 giây",
-        time: 3,
-        muscleGroup: "Toàn thân",
-        kneeRisk: false
-    },
-    bearCrawlWalk: {
-        name: "🐻 Bò kiểu gấu (Bear Crawl)",
-        guide: "Nhấc gối cách sàn 5cm. Bò tiến về phía trước bằng cách di chuyển đồng thời tay này chân kia, sau đó bò lùi lại.",
-        caution: "Giữ lưng phẳng, không nâng hông vểnh lên trần.",
-        reps: "3 hiệp x 30 giây",
-        time: 2.5,
-        muscleGroup: "Toàn thân",
-        kneeRisk: false
-    },
-    fastFeet: {
-        name: "🐾 Chạy nhấp chân nhanh (Fast Feet)",
-        guide: "Hơi trùng gối nhẹ, nhấp hai bàn chân lên xuống mặt sàn liên tục và nhanh nhất có thể như đang đi trên cát nóng.",
-        caution: "Chỉ nhấc nhẹ mũi chân rời sàn, giữ thân trên cố định.",
-        reps: "3 hiệp x 20 giây",
-        time: 1.5,
-        muscleGroup: "Toàn thân",
-        kneeRisk: true
-    },
-    woodChopBody: {
-        name: "🪓 Chặt củi tay không",
-        guide: "Đứng rộng chân. Đưa hai tay chụm lại lên cao qua vai phải, sau đó vung tay chéo xuống đùi trái đồng thời xoay nhẹ hông.",
-        caution: "Dùng lực từ cơ bụng xoay để kiểm soát chuyển động.",
-        reps: "3 hiệp x 12 lần mỗi bên",
-        time: 2.5,
-        muscleGroup: "Toàn thân",
-        kneeRisk: false
-    },
-    plankJackLight: {
-        name: "🪵 Plank bước chân ngang",
-        guide: "Tư thế plank cao. Bước chân trái sang bên một bước, thu về, rồi bước chân phải sang bên, thu về. Không bật nhảy.",
-        caution: "Giữ hông cố định, không để hông nhô lên hạ xuống.",
-        reps: "3 hiệp x 12 lần",
-        time: 2,
-        muscleGroup: "Toàn thân",
-        kneeRisk: false
-    },
-    marchInPlace: {
-        name: "🚶 Đi bộ cao đùi tại chỗ",
-        guide: "Đứng thẳng, nhấc luân phiên từng đùi lên cao vuông góc với thân người, kết hợp đánh tay nhịp nhàng như đi duyệt binh.",
-        caution: "Giữ lưng thẳng, hạ chân xuống nhẹ nhàng.",
-        reps: "3 hiệp x 45 giây",
-        time: 2.5,
-        muscleGroup: "Toàn thân",
-        kneeRisk: false
-    },
-    crabWalk: {
-        name: "🦀 Bò kiểu cua",
-        guide: "Ngồi trên sàn, chống hai tay ra sau, co gối nâng mông rời sàn. Thực hiện bò lùi hoặc tiến bằng tay và chân.",
-        caution: "Không nâng mông quá cao, giữ vai thoải mái không nhún ép cổ.",
-        reps: "3 hiệp x 30 giây",
-        time: 2.5,
-        muscleGroup: "Toàn thân",
-        kneeRisk: false
-    }
+  warmup: { name: "🔥 Khởi động toàn thân", guide: "1. Xoay cổ nhẹ nhàng 5 vòng mỗi bên. 2. Xoay vai 10 lần tới, 10 lần lui. 3. Xoay cổ tay, cổ chân 10 vòng. 4. Gập người về trước, tay chạm mắt cá chân (gối hơi cong). 5. Xoay hông 10 vòng. 6. Chạy bước nhẹ tại chỗ 30 giây.", caution: "Không bật nảy, không xoay quá nhanh.", reps: "5 phút", time: 5, muscleGroup: "Toàn thân", kneeRisk: false },
+  cooldown: { name: "🧘 Thả lỏng & căng cơ", guide: "1. Ngồi duỗi chân, cúi người về trước kéo căng đùi sau (30s). 2. Nằm ngửa, ôm gối vào ngực mỗi bên 20s. 3. Căng cơ mông. 4. Hít thở sâu 5 nhịp.", caution: "Không kéo căng đến mức đau.", reps: "3 phút", time: 3, muscleGroup: "Toàn thân", kneeRisk: false },
+  clam: { name: "🐚 Clam Shell (vỏ sò)", guide: "Nằm nghiêng, gối gập 90°, hai chân chồng lên nhau. Giữ hai bàn chân chạm nhau, từ từ mở gối trên lên cao nhất có thể, giữ 2 giây, hạ chậm.", caution: "Không xoay hông. Nếu đau hông, giảm biên độ.", reps: "3 hiệp × 12 lần/bên", time: 2.5, muscleGroup: "Chân-Mông", kneeRisk: false },
+  gluteBridge: { name: "🌉 Cầu mông 1 chân", guide: "Nằm ngửa, co gối, bàn chân sát mông. Siết mông nâng hông lên cao, chân kia duỗi thẳng, giữ 2 giây, hạ chậm.", caution: "Không ưỡn lưng quá mức. Nếu gối yếu, tập cầu mông 2 chân trước.", reps: "3 hiệp × 10 lần/chân", time: 2.5, muscleGroup: "Chân-Mông", kneeRisk: false },
+  wallSquat: { name: "🧱 Squat tường", guide: "Tựa lưng vào tường, chân đưa ra trước 30–40cm. Trượt xuống đến khi đùi song song mặt đất, giữ 2 giây, đẩy lên.", caution: "Gối không vượt quá mũi chân. Nếu đau, chỉ hạ 45°.", reps: "3 hiệp × 12 lần", time: 2.5, muscleGroup: "Chân-Mông", kneeRisk: true },
+  deadliftTay: { name: "🏋️ Deadlift tạ đơn", guide: "Đứng rộng bằng hông, cầm tạ. Giữ lưng thẳng, hông gập về sau, hạ tạ dọc cẳng chân đến dưới đầu gối. Đẩy hông lên.", caution: "Lưng thẳng xuyên suốt. Không gù lưng, không khóa gối.", reps: "3 hiệp × 10 lần", time: 3, muscleGroup: "Chân-Mông", kneeRisk: false },
+  bulgarianSquat: { name: "🦵 Bulgarian Split Squat", guide: "Đặt một chân lên ghế cao ngang gối. Hạ thấp người cho gối sau gần chạm sàn, đẩy lên.", caution: "Gối trước không vượt mũi chân.", reps: "3 hiệp × 8 lần/chân", time: 3, muscleGroup: "Chân-Mông", kneeRisk: true },
+  lunges: { name: "🚶 Lunge tại chỗ", guide: "Bước một chân dài về trước, hạ gối sau gần sàn (gối trước vuông góc). Đẩy về tư thế đứng, đổi bên.", caution: "Gối trước không vượt mũi chân.", reps: "3 hiệp × 10 lần/chân", time: 2.5, muscleGroup: "Chân-Mông", kneeRisk: true },
+  stepUp: { name: "📦 Step-up", guide: "Bước một chân lên bục cao 20–30cm, đưa chân kia theo, bước xuống, đổi chân.", caution: "Không dùng đà, kiểm soát toàn bộ.", reps: "3 hiệp × 10 lần/chân", time: 2.5, muscleGroup: "Chân-Mông", kneeRisk: true },
+  donkeyKick: { name: "🦵 Donkey Kick", guide: "Quỳ 4 điểm. Đá một chân lên trần, giữ gối gập 90°. Siết mông ở đỉnh.", caution: "Không võng lưng, không xoay hông.", reps: "3 hiệp × 15 lần/chân", time: 2, muscleGroup: "Chân-Mông", kneeRisk: false },
+  sideLegRaise: { name: "🦵 Nâng chân nghiêng", guide: "Nằm nghiêng, chân dưới co nhẹ. Nâng chân trên lên cao, giữ 1 giây, hạ chậm.", caution: "Không xoay hông về trước.", reps: "3 hiệp × 12 lần/bên", time: 2, muscleGroup: "Chân-Mông", kneeRisk: false },
+  squatJump: { name: "🏀 Squat bật nhảy", guide: "Squat bình thường, khi đứng lên bật nhẹ. Tiếp đất bằng nửa bàn chân trước, hạ gối mềm.", caution: "Chỉ tập khi gối 4–5.", reps: "3 hiệp × 8 lần", time: 2, muscleGroup: "Chân-Mông", kneeRisk: true },
+  calfRaise: { name: "🦵 Kiễng gót", guide: "Kiễng gót lên cao nhất, giữ 1 giây, hạ từ từ.", caution: "Giữ thăng bằng, không dùng đà.", reps: "3 hiệp × 15 lần", time: 1.5, muscleGroup: "Chân-Mông", kneeRisk: false },
+  fireHydrant: { name: "🚒 Fire Hydrant", guide: "Quỳ 4 điểm, đưa một chân sang ngang, giữ gối gập 90°. Siết mông ngoài.", caution: "Lưng thẳng, không nghiêng người.", reps: "3 hiệp × 12 lần/bên", time: 2, muscleGroup: "Chân-Mông", kneeRisk: false },
+  frogPump: { name: "🐸 Frog Pump", guide: "Nằm ngửa, áp hai lòng bàn chân vào nhau. Siết mông nâng hông lên rồi hạ chạm nhẹ.", caution: "Tập trung lực vào mông, không dùng lưng dưới.", reps: "3 hiệp × 15 lần", time: 2, muscleGroup: "Chân-Mông", kneeRisk: false },
+  kneelingSquat: { name: "🧎 Squat quỳ", guide: "Quỳ hai gối, hạ mông xuống gót chân, đẩy thẳng dậy, siết mạnh mông.", caution: "Lót thảm dày.", reps: "3 hiệp × 15 lần", time: 2, muscleGroup: "Chân-Mông", kneeRisk: false },
+  gluteBridgeHold: { name: "🌉 Cầu mông giữ tĩnh", guide: "Nằm ngửa, co gối, nâng hông. Siết mông, giữ tư thế, hít thở đều.", caution: "Không ưỡn lưng dưới quá mức.", reps: "3 hiệp × 30 giây", time: 2, muscleGroup: "Chân-Mông", kneeRisk: false },
+  rainbowKicks: { name: "🌈 Rainbow Kicks", guide: "Quỳ 4 điểm, duỗi thẳng một chân ra sau. Vẽ đường vòng cung sang trái rồi sang phải.", caution: "Không lắc lư người.", reps: "3 hiệp × 12 lần/bên", time: 2.5, muscleGroup: "Chân-Mông", kneeRisk: false },
+  singleLegDeadliftBody: { name: "🧍 Deadlift 1 chân tay không", guide: "Trụ bằng một chân, gập người từ hông về trước, đá chân kia ra sau song song sàn.", caution: "Lưng thẳng, gối chân trụ hơi trùng.", reps: "3 hiệp × 8 lần/chân", time: 2.5, muscleGroup: "Chân-Mông", kneeRisk: false },
+  lateralLegWalk: { name: "🦀 Đi bộ ngang", guide: "Hơi trùng gối nhẹ, bước sang trái 10 bước rồi ngược lại.", caution: "Giữ khoảng cách hai chân rộng bằng hông.", reps: "3 hiệp × 20 bước", time: 2, muscleGroup: "Chân-Mông", kneeRisk: false },
+  singleLegCalfRaise: { name: "🦿 Kiễng gót 1 chân", guide: "Co một chân, kiễng gót cao nhất có thể, hạ chậm.", caution: "Có thể bám nhẹ tường.", reps: "3 hiệp × 12 lần/chân", time: 2, muscleGroup: "Chân-Mông", kneeRisk: false },
+  plankKnee: { name: "🧘 Plank từ gối", guide: "Chống hai cẳng tay, gối chạm sàn, siết bụng, giữ lưng thẳng.", caution: "Không võng lưng.", reps: "3 hiệp × 20–30 giây", time: 2, muscleGroup: "Core", kneeRisk: false },
+  deadbug: { name: "🪲 Dead Bug", guide: "Nằm ngửa, co gối 90°, tay giơ thẳng lên. Duỗi chân trái và hạ tay phải xuống (không chạm sàn), đổi bên.", caution: "Thắt lưng áp sát sàn xuyên suốt.", reps: "3 hiệp × 8 lần/bên", time: 2.5, muscleGroup: "Core", kneeRisk: false },
+  legRaise: { name: "🦵 Nâng chân đơn", guide: "Nằm ngửa, nâng một chân lên 45°, giữ 2 giây, hạ chậm.", caution: "Không để lưng cong khỏi sàn.", reps: "3 hiệp × 10 lần/chân", time: 2, muscleGroup: "Core", kneeRisk: false },
+  russianTwist: { name: "🔄 Russian Twist", guide: "Ngồi ngả lưng, xoay thân sang trái rồi sang phải. Có thể cầm tạ nhẹ.", caution: "Không xoay quá nhanh.", reps: "3 hiệp × 12 lần/bên", time: 2.5, muscleGroup: "Core", kneeRisk: false },
+  bicycleCrunch: { name: "🚴 Bicycle Crunch", guide: "Nằm ngửa, tay sau đầu, đưa gối trái về phía khuỷu phải đồng thời duỗi chân phải, đổi bên.", caution: "Không kéo cổ, dùng bụng nâng vai.", reps: "3 hiệp × 15 lần/bên", time: 2.5, muscleGroup: "Core", kneeRisk: false },
+  flutterKicks: { name: "🏊 Flutter Kicks", guide: "Nằm ngửa, tay dưới mông, nâng hai chân 15cm, đạp lên xuống nhịp nhàng.", caution: "Lưng áp sàn, không nín thở.", reps: "3 hiệp × 20 giây", time: 2, muscleGroup: "Core", kneeRisk: false },
+  hollowHold: { name: "⭐ Hollow Hold", guide: "Nằm ngửa, nâng vai và hai chân, chỉ lưng dưới chạm sàn, giữ tư thế.", caution: "Nếu đau lưng, co gối hoặc hạ thấp vai.", reps: "3 hiệp × 15–20 giây", time: 1.5, muscleGroup: "Core", kneeRisk: false },
+  crunch: { name: "💪 Crunch cơ bản", guide: "Nằm ngửa, co gối, tay sau đầu. Nâng vai và đầu gối, siết bụng, hạ chậm.", caution: "Không kéo cổ, cằm cách ngực 1 nắm tay.", reps: "3 hiệp × 15 lần", time: 2, muscleGroup: "Core", kneeRisk: false },
+  reverseCrunch: { name: "⬆️ Reverse Crunch", guide: "Nằm ngửa, nâng hai chân vuông góc. Dùng bụng dưới nâng hông lên, cuộn người về phía ngực.", caution: "Không dùng đà, thực hiện chậm.", reps: "3 hiệp × 12 lần", time: 2, muscleGroup: "Core", kneeRisk: false },
+  sidePlank: { name: "🤸 Side Plank", guide: "Nằm nghiêng, chống khuỷu tay dưới vai, nâng hông lên, giữ. Đổi bên.", caution: "Không để hông chùng.", reps: "3 hiệp × 15s/bên", time: 2, muscleGroup: "Core", kneeRisk: false },
+  vUp: { name: "📐 V-up", guide: "Nằm ngửa, đồng thời nâng chân và thân trên, tay chạm mũi chân (chữ V). Hạ chậm.", caution: "Bài khó, có thể co gối.", reps: "3 hiệp × 8 lần", time: 2.5, muscleGroup: "Core", kneeRisk: false },
+  mountainClimber: { name: "⛰️ Mountain Climber", guide: "Tư thế plank cao. Đưa gối lần lượt lên ngực, nhanh dần.", caution: "Giữ hông thấp, không nâng mông.", reps: "3 hiệp × 20 giây", time: 2, muscleGroup: "Core", kneeRisk: false },
+  toeTap: { name: "👣 Toe Tap", guide: "Nằm ngửa, co gối 90°. Hạ lần lượt từng mũi chân chạm sàn rồi nâng lên.", caution: "Thắt lưng áp sàn, bụng siết.", reps: "3 hiệp × 15 lần/chân", time: 2, muscleGroup: "Core", kneeRisk: false },
+  plankTap: { name: "🪵 Plank chạm vai", guide: "Plank cao, nhấc tay trái chạm vai phải, hạ xuống, đổi bên.", caution: "Không lắc hông.", reps: "3 hiệp × 10 lần/bên", time: 2, muscleGroup: "Core", kneeRisk: false },
+  birdDog: { name: "🦅 Bird Dog", guide: "Quỳ 4 điểm. Nâng tay phải về trước đồng thời đá chân trái ra sau. Đổi bên.", caution: "Đường thẳng từ tay đến chân, không ngửa cổ.", reps: "3 hiệp × 10 lần/bên", time: 2.5, muscleGroup: "Core", kneeRisk: false },
+  obliqueCrunch: { name: "🔄 Gập bụng chéo", guide: "Nằm ngửa co gối, đặt cẳng chân trái lên đầu gối phải. Tay phải sau đầu, gập vai phải về phía đầu gối trái.", caution: "Dùng cơ bụng xéo, không kéo cổ.", reps: "3 hiệp × 12 lần/bên", time: 2.5, muscleGroup: "Core", kneeRisk: false },
+  sidePlankDips: { name: "🤸 Side Plank nhấp hông", guide: "Tư thế Side Plank. Hạ hông gần chạm sàn rồi đẩy lên cao hơn.", caution: "Thực hiện chậm, kiểm soát cơ sườn.", reps: "3 hiệp × 10 lần/bên", time: 2.5, muscleGroup: "Core", kneeRisk: false },
+  pushupKnee: { name: "💪 Hít đất từ gối", guide: "Chống hai tay rộng bằng vai, gối chạm sàn, lưng thẳng. Hạ ngực xuống gần sàn, đẩy lên.", caution: "Khuỷu tay xuôi theo thân.", reps: "3 hiệp × 8–10 lần", time: 2, muscleGroup: "Ngực-Vai-Tay", kneeRisk: false },
+  pushupFull: { name: "💪 Hít đất chuẩn", guide: "Plank thẳng chân, hạ ngực chạm sàn, đẩy lên, giữ lưng thẳng.", caution: "Nếu chưa đủ sức, tập từ gối.", reps: "3 hiệp × 5–8 lần", time: 2.5, muscleGroup: "Ngực-Vai-Tay", kneeRisk: false },
+  overheadPress: { name: "🏋️ Overhead Press", guide: "Đứng, cầm tạ ngang vai, đẩy lên cao, hạ về vai.", caution: "Không ưỡn lưng, siết bụng.", reps: "3 hiệp × 8–10 lần", time: 2.5, muscleGroup: "Ngực-Vai-Tay", kneeRisk: false },
+  lateralRaise: { name: "✈️ Lateral Raise", guide: "Cầm tạ nhẹ, giơ tay sang ngang đến ngang vai, hạ chậm.", caution: "Không dùng đà.", reps: "3 hiệp × 12 lần", time: 2, muscleGroup: "Ngực-Vai-Tay", kneeRisk: false },
+  bicepCurl: { name: "💪 Bicep Curl", guide: "Đứng, cầm tạ, cuốn tạ lên vai (lòng bàn tay hướng lên), khuỷu cố định.", caution: "Không đung đưa thân.", reps: "3 hiệp × 10 lần", time: 2, muscleGroup: "Ngực-Vai-Tay", kneeRisk: false },
+  tricepsDip: { name: "💪 Triceps Dip", guide: "Tay tựa ghế phía sau, chân duỗi. Hạ xuống đến khuỷu 90°, đẩy lên.", caution: "Vai không nhún, không hạ quá sâu.", reps: "3 hiệp × 10 lần", time: 2.5, muscleGroup: "Ngực-Vai-Tay", kneeRisk: false },
+  diamondPushup: { name: "💎 Diamond Pushup", guide: "Chống hai tay chụm hình kim cương dưới ngực, hít đất.", caution: "Bài khó, tập từ gối nếu cần.", reps: "3 hiệp × 5–8 lần", time: 2, muscleGroup: "Ngực-Vai-Tay", kneeRisk: false },
+  pikePushup: { name: "🔺 Pike Pushup", guide: "Tư thế chữ V ngược (mông cao), hạ đầu gần sàn, đẩy lên.", caution: "Không gập khuỷu quá sâu.", reps: "3 hiệp × 8 lần", time: 2.5, muscleGroup: "Ngực-Vai-Tay", kneeRisk: false },
+  floorPress: { name: "🏋️ Floor Press", guide: "Nằm ngửa co gối, cầm tạ. Hạ đến khuỷu chạm sàn, đẩy lên.", caution: "Không bật tạ, kiểm soát.", reps: "3 hiệp × 10 lần", time: 2.5, muscleGroup: "Ngực-Vai-Tay", kneeRisk: false },
+  arnoldPress: { name: "💪 Arnold Press", guide: "Cầm tạ ngang vai (lòng bàn tay vào mặt), đẩy lên xoay cổ tay ra ngoài chậm rãi.", caution: "Xoay chậm, không giật.", reps: "3 hiệp × 8 lần", time: 2.5, muscleGroup: "Ngực-Vai-Tay", kneeRisk: false },
+  hammerCurl: { name: "🔨 Hammer Curl", guide: "Cầm tạ lòng bàn tay hướng vào nhau, cuốn lên vai giữ nguyên hướng.", caution: "Khuỷu sát sườn, không đung đưa.", reps: "3 hiệp × 12 lần", time: 2, muscleGroup: "Ngực-Vai-Tay", kneeRisk: false },
+  tricepsExtension: { name: "💪 Duỗi tay sau qua đầu", guide: "Hai tay cầm tạ đưa qua đầu, gập khuỷu hạ ra sau gáy, duỗi lên.", caution: "Khuỷu khép gần tai.", reps: "3 hiệp × 10 lần", time: 2, muscleGroup: "Ngực-Vai-Tay", kneeRisk: false },
+  inclinePushup: { name: "🪜 Hít đất dốc lên", guide: "Tay trên bục cao, chân lùi ra, hạ ngực chạm cạnh bục rồi đẩy lên.", caution: "Lưng thẳng xuyên suốt.", reps: "3 hiệp × 10–12 lần", time: 2, muscleGroup: "Ngực-Vai-Tay", kneeRisk: false },
+  rowTay: { name: "⛵ Hàng tạ 1 tay", guide: "Tựa tay và đầu gối lên ghế, lưng thẳng. Kéo tạ về hông, khuỷu ép sát người.", caution: "Không xoay thân, không dùng đà.", reps: "3 hiệp × 10 lần/tay", time: 3, muscleGroup: "Lưng trên", kneeRisk: false },
+  superman: { name: "🦸 Superman", guide: "Nằm sấp, nâng tay, chân và ngực lên cùng lúc, giữ 2 giây, hạ.", caution: "Nhìn xuống sàn, không ngửa cổ quá.", reps: "3 hiệp × 10 lần", time: 2, muscleGroup: "Lưng trên", kneeRisk: false },
+  bentOverRow: { name: "🔱 Bent-over Row", guide: "Cúi người lưng thẳng, hai tay cầm tạ, kéo về bụng dưới.", caution: "Không gù lưng.", reps: "3 hiệp × 10 lần", time: 2.5, muscleGroup: "Lưng trên", kneeRisk: false },
+  reverseFly: { name: "🦅 Reverse Fly", guide: "Cúi người, cầm tạ nhẹ, giơ tay sang ngang đến ngang vai, siết lưng trên.", caution: "Khuỷu hơi cong.", reps: "3 hiệp × 12 lần", time: 2, muscleGroup: "Lưng trên", kneeRisk: false },
+  towelRow: { name: "🧣 Towel Row", guide: "Ngồi, chân duỗi, vắt khăn qua bàn chân, kéo về phía ngực.", caution: "Lưng thẳng.", reps: "3 hiệp × 12 lần", time: 2, muscleGroup: "Lưng trên", kneeRisk: false },
+  superman2: { name: "🦸 Superman biến thể", guide: "Nằm sấp, nâng tay phải và chân trái lên, hạ xuống đổi bên.", caution: "Nhìn xuống sàn.", reps: "3 hiệp × 8 lần/bên", time: 2, muscleGroup: "Lưng trên", kneeRisk: false },
+  wRaise: { name: "👐 Nằm sấp giơ chữ W", guide: "Nằm sấp, tay co chữ W. Nâng ngực và tay, ép xương bả vai ra sau 2 giây.", caution: "Nhìn xuống sàn.", reps: "3 hiệp × 12 lần", time: 2, muscleGroup: "Lưng trên", kneeRisk: false },
+  goodMorning: { name: "☀️ Good Morning", guide: "Đứng thẳng, tay sau đầu. Gập người từ hông về phía trước đến thân gần song song sàn, đẩy lên.", caution: "Gối chỉ trùng nhẹ.", reps: "3 hiệp × 12 lần", time: 2.5, muscleGroup: "Lưng trên", kneeRisk: false },
+  doorwayRow: { name: "🚪 Kéo lưng ở mép cửa", guide: "Bám khung cửa, ngả người ra sau hết cỡ rồi kéo sát vào.", caution: "Chọn khung cửa chắc chắn.", reps: "3 hiệp × 12 lần", time: 2, muscleGroup: "Lưng trên", kneeRisk: false },
+  renegadeRow: { name: "🚣 Hít đất kéo tạ", guide: "Plank cao với tạ đơn. Giữ vững người, kéo một tay mang tạ lên hông, đổi bên.", caution: "Mở rộng chân để giữ thăng bằng.", reps: "3 hiệp × 8 lần/tay", time: 3, muscleGroup: "Lưng trên", kneeRisk: false },
+  backExtensionFloor: { name: "🧜 Nâng thân trên nằm sấp", guide: "Nằm sấp, tay sau gáy, chân cố định. Nâng ngực lên bằng cơ lưng, hạ xuống.", caution: "Không giật người lên quá cao.", reps: "3 hiệp × 12 lần", time: 2, muscleGroup: "Lưng trên", kneeRisk: false },
+  highKnees: { name: "🏃 Chạy bước cao tại chỗ", guide: "Nâng gối lên ngang hông, chạy nhẹ tại chỗ.", caution: "Tiếp đất bằng nửa bàn chân trước.", reps: "4 hiệp × 20 giây", time: 2, muscleGroup: "Toàn thân", kneeRisk: false },
+  shadowBox: { name: "🥊 Shadow Boxing", guide: "Thế thủ boxing, đấm thẳng và đấm vòng liên tục vào không trung.", caution: "Không khóa thẳng khuỷu khi ra đòn.", reps: "3 hiệp × 45 giây", time: 3, muscleGroup: "Toàn thân", kneeRisk: false },
+  marchInPlace: { name: "🚶 Đi bộ cao đùi tại chỗ", guide: "Nhấc luân phiên từng đùi vuông góc thân người, đánh tay nhịp nhàng.", caution: "Hạ chân nhẹ nhàng.", reps: "3 hiệp × 45 giây", time: 2.5, muscleGroup: "Toàn thân", kneeRisk: false },
+  bearCrawlWalk: { name: "🐻 Bò kiểu gấu", guide: "Gối cách sàn 5cm. Bò tiến bằng cách di chuyển đồng thời tay này chân kia.", caution: "Lưng phẳng, không vểnh mông.", reps: "3 hiệp × 30 giây", time: 2.5, muscleGroup: "Toàn thân", kneeRisk: false },
+  woodChopBody: { name: "🪓 Chặt củi tay không", guide: "Đứng rộng chân. Vung tay chụm lại từ vai phải xuống đùi trái, xoay nhẹ hông.", caution: "Dùng lực cơ bụng xoay.", reps: "3 hiệp × 12 lần/bên", time: 2.5, muscleGroup: "Toàn thân", kneeRisk: false },
 };
 
 const ALL_MUSCLE_GROUPS = ["Chân-Mông", "Core", "Ngực-Vai-Tay", "Lưng trên", "Toàn thân"];
 
-// ==================== HELPER ====================
+// ==================== SPORT DATA ====================
+const METS = {
+  football_5_goal:4.5, football_5_defender:6.5, football_5_mid:8.5, badminton:5.5,
+  running:7.0, swimming:6.0, gym_free:5.0, walking:3.5, guided_workout:5.0
+};
+const SPORT_NAMES = {
+  football_5_goal:"Bóng đá sân5 (Thủ môn)", football_5_defender:"Bóng đá sân5 (Hậu vệ)",
+  football_5_mid:"Bóng đá sân5 (Tiền vệ)", badminton:"Cầu lông", running:"Chạy bộ",
+  swimming:"Bơi", gym_free:"Tập gym", walking:"Đi bộ nhanh"
+};
+const sportMuscleMap = {
+  football_5_goal: ["Chân-Mông","Core"],
+  football_5_defender: ["Chân-Mông","Core","Ngực-Vai-Tay"],
+  football_5_mid: ["Chân-Mông","Core","Ngực-Vai-Tay","Lưng trên"],
+  badminton: ["Chân-Mông","Core","Ngực-Vai-Tay"],
+  running: ["Chân-Mông","Core"],
+  swimming: ["Chân-Mông","Core","Ngực-Vai-Tay","Lưng trên"],
+  gym_free: ["Ngực-Vai-Tay","Lưng trên","Core"],
+  walking: ["Chân-Mông"]
+};
+
 function calculateCalories(met, weight, minutes) {
-    return Math.round(met * weight * (minutes / 60));
+  return Math.round(met * weight * (minutes / 60));
 }
 
-function saveAppData() {
-    localStorage.setItem("flexifit_v9", JSON.stringify(appData));
-    updateWeeklyGoal();
-    updateMuscleStats();
-    renderHistoryTab();
-    updateTodayStats();
-}
-
-function loadAppData() {
-    let raw = localStorage.getItem("flexifit_v9");
-    if (!raw) raw = localStorage.getItem("flexifit_v8");
-    if (raw) {
-        let p = JSON.parse(raw);
-        appData = { ...appData, ...p };
-    }
-    if (!appData.weightHistory)   appData.weightHistory   = [];
-    if (!appData.workoutSessions) appData.workoutSessions = [];
-    if (!appData.weeklyGoal)      appData.weeklyGoal      = { type:"sessions", target:4 };
-    document.getElementById("currentWeightSpan").innerText = appData.currentWeight;
-    document.getElementById("goalType").value  = appData.weeklyGoal.type;
-    document.getElementById("goalValue").value = appData.weeklyGoal.target;
-    updateWeeklyGoal();
-    updateMuscleStats();
-    renderHistoryTab();
-    updateTodayStats();
-}
-
-function addSession(session) {
-    if (!session.date) session.date = new Date().toISOString().slice(0, 10);
-    appData.workoutSessions.push(session);
-    saveAppData();
-}
-
-function updateTodayStats() {
-    let today = new Date().toISOString().slice(0, 10);
-    let calo = appData.workoutSessions
-        .filter(s => s.date === today)
-        .reduce((acc, s) => acc + (s.totalCalo || 0), 0);
-    document.getElementById("todayCalories").innerText = calo;
-}
-
-
-
-function updateWeeklyGoal() {
-    let now   = new Date();
-    let start = new Date(now);
-    start.setDate(now.getDate() - now.getDay());
-    start.setHours(0, 0, 0, 0);
-    let weekSessions = appData.workoutSessions.filter(s => new Date(s.date) >= start);
-    let goal    = appData.weeklyGoal;
-    let current = (goal.type === "sessions")
-        ? weekSessions.length
-        : weekSessions.reduce((acc, s) => acc + (s.totalCalo || 0), 0);
-    let percent = goal.target > 0 ? Math.min(100, Math.round((current / goal.target) * 100)) : 0;
-    document.getElementById("goalProgressFill").style.width = percent + "%";
-    document.getElementById("goalProgressFill").innerText   = percent + "%";
-    document.getElementById("goalStatus").innerHTML = `Đạt ${current}/${goal.target} ${goal.type === "sessions" ? "buổi" : "kcal"}`;
-}
-
-// ==================== BÀI TẬP VỚI CHỌN NHÓM CƠ KHI THAY BÀI ====================
+// ==================== WORKOUT GENERATION ====================
 function getAlternativeExercises(muscleGroup, currentName, kneeScore) {
-    return Object.entries(exerciseLibrary)
-        .filter(([key, ex]) =>
-            ex.muscleGroup === muscleGroup &&
-            ex.name !== currentName &&
-            key !== "warmup" && key !== "cooldown" &&
-            !(ex.kneeRisk && kneeScore < 4)
-        )
-        .map(([key, ex]) => ({ ...ex, id: key }));
+  return Object.entries(exerciseLibrary)
+    .filter(([key, ex]) =>
+      ex.muscleGroup === muscleGroup &&
+      ex.name !== currentName &&
+      key !== "warmup" && key !== "cooldown" &&
+      !(ex.kneeRisk && kneeScore < 4)
+    )
+    .map(([key, ex]) => ({ ...ex, id: key }));
 }
 
 let currentExercises = [];
 let _workoutListenerAttached = false;
 
-// Lưu trạng thái hoàn thành trước khi refresh lại toàn bộ
 function saveCompletionState() {
-    if (!currentExercises.length) return [];
-    let state = [];
-    for (let i = 0; i < currentExercises.length; i++) {
-        let cb = document.querySelector(`.exercise-detail #ex-${i} .complete-check`);
-        state.push(cb ? cb.checked : false);
-    }
-    return state;
+  return currentExercises.map((_, i) => {
+    const cb = document.querySelector(`#ex-${i} .complete-check`);
+    return cb ? cb.checked : false;
+  });
 }
 
 function restoreCompletionState(state) {
-    if (!state.length) return;
-    for (let i = 0; i < currentExercises.length && i < state.length; i++) {
-        let cb = document.querySelector(`#ex-${i} .complete-check`);
-        if (cb) cb.checked = state[i];
-    }
-    updateOverallCompletion();
+  state.forEach((checked, i) => {
+    const cb = document.querySelector(`#ex-${i} .complete-check`);
+    if (cb) cb.checked = checked;
+  });
+  updateOverallCompletion();
 }
 
 function updateOverallCompletion() {
-    const cbs = document.querySelectorAll(".complete-check");
-    const total = cbs.length;
-    const checked = Array.from(cbs).filter(cb => cb.checked).length;
-    const percent = total ? Math.round((checked / total) * 100) : 0;
-    const el = document.getElementById("completionStatus");
-    if (el) el.innerHTML = `✅ Hoàn thành ${percent}% (${checked}/${total} bài)`;
-    window.currentCompletion = percent;
+  const cbs = document.querySelectorAll(".complete-check");
+  const total = cbs.length;
+  const checked = Array.from(cbs).filter(cb => cb.checked).length;
+  const percent = total ? Math.round((checked / total) * 100) : 0;
+  const el = document.getElementById("completionStatus");
+  if (el) {
+    el.querySelector(".completion-pct").textContent = percent + "%";
+    el.querySelector(".progress-fill").style.width = percent + "%";
+    el.querySelector(".completion-label").textContent = `${checked} / ${total} bài hoàn thành`;
+  }
+  window.currentCompletion = percent;
 }
 
-// Render danh sách bài tập kèm dropdown chọn nhóm cơ cho từng bài
 function renderDetailedWorkout(exercises) {
-    currentExercises = exercises;
-    let html = `<div class="workout-card">⏱️ Tổng thời gian ước tính: ${Math.round(exercises.reduce((s, e) => s + e.time, 0))} phút</div>`;
-    exercises.forEach((ex, idx) => {
-        // Tạo dropdown các nhóm cơ
-        let selectOptions = ALL_MUSCLE_GROUPS.map(mg => `<option value="${mg}" ${ex.muscleGroup === mg ? 'selected' : ''}>${mg}</option>`).join('');
-        html += `<div class="exercise-detail" id="ex-${idx}">
-            <div class="exercise-header">
-                <strong>${ex.name}</strong>
-                <span class="badge">🎯 ${ex.muscleGroup}</span>
-                <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-                    <select class="replace-select muscle-select-${idx}" data-idx="${idx}" style="width:130px;">${selectOptions}</select>
-                    <button class="outline replace-ex-btn" data-idx="${idx}" style="padding:4px 16px; margin:0; width:auto;">🔄 Thay bài</button>
-                    <label style="display:flex; align-items:center; gap:6px; font-weight:normal; margin:0;">
-                        <input type="checkbox" class="complete-check" data-exid="${idx}"> Đã xong
-                    </label>
-                </div>
-            </div>
-            <div class="rep-guide">
-                📝 <strong>Hướng dẫn:</strong> ${ex.guide}<br>
-                🔁 <strong>Số lần/hiệp:</strong> ${ex.reps}
-            </div>
-            ${ex.caution ? `<div class="warning-note">⚠️ ${ex.caution}</div>` : ""}
-        </div>`;
+  currentExercises = exercises;
+  const totalMin = Math.round(exercises.reduce((s, e) => s + e.time, 0));
+  let html = `<div class="workout-meta">⏱️ Tổng thời gian ước tính: <strong>${totalMin} phút</strong> · ${exercises.length} bài tập</div>`;
+
+  exercises.forEach((ex, idx) => {
+    const selectOptions = ALL_MUSCLE_GROUPS.map(mg =>
+      `<option value="${mg}" ${ex.muscleGroup === mg ? 'selected' : ''}>${mg}</option>`
+    ).join('');
+    html += `
+    <div class="ex-card" id="ex-${idx}">
+      <div class="ex-head">
+        <div class="ex-name">${ex.name}</div>
+        <div class="ex-controls">
+          <span class="tag accent">${ex.muscleGroup}</span>
+          <select class="replace-select muscle-select-${idx}" data-idx="${idx}">${selectOptions}</select>
+          <button class="btn btn-secondary btn-sm replace-ex-btn" data-idx="${idx}" style="margin-top:0;">🔄</button>
+          <label class="done-label">
+            <input type="checkbox" class="complete-check" data-exid="${idx}"> Xong
+          </label>
+        </div>
+      </div>
+      <div class="ex-guide">
+        <strong>Hướng dẫn:</strong> ${ex.guide}<br>
+        <span class="reps">🔁 ${ex.reps}</span>
+      </div>
+      ${ex.caution ? `<div class="ex-warning">⚠️ ${ex.caution}</div>` : ""}
+    </div>`;
+  });
+
+  html += `
+  <div class="completion-bar-wrap" id="completionStatus">
+    <div style="flex:1">
+      <div class="completion-label">0 / ${exercises.length} bài hoàn thành</div>
+      <div class="progress-track" style="margin-top:6px;">
+        <div class="progress-fill" style="width:0%"></div>
+      </div>
+    </div>
+    <div class="completion-pct">0%</div>
+  </div>`;
+
+  document.getElementById("generatedWorkoutArea").innerHTML = html;
+  document.getElementById("saveWorkoutSessionBtn").style.display = "";
+
+  const container = document.getElementById("generatedWorkoutArea");
+  if (!_workoutListenerAttached) {
+    container.addEventListener("click", handleReplaceClick);
+    _workoutListenerAttached = true;
+  }
+  document.querySelectorAll(".complete-check").forEach(cb => {
+    cb.addEventListener("change", () => {
+      const card = cb.closest(".ex-card");
+      if (card) card.classList.toggle("done", cb.checked);
+      updateOverallCompletion();
     });
-    html += `<div id="completionStatus" class="badge" style="margin-top:8px;">0% hoàn thành</div>`;
-    document.getElementById("generatedWorkoutArea").innerHTML = html;
-
-    // Gắn sự kiện thay bài (chỉ một lần duy nhất)
-    const container = document.getElementById("generatedWorkoutArea");
-    if (!_workoutListenerAttached) {
-        container.addEventListener("click", handleReplaceClick);
-        _workoutListenerAttached = true;
-    }
-
-    // Gắn sự kiện checkbox cập nhật tỷ lệ hoàn thành
-    const cbs = document.querySelectorAll(".complete-check");
-    cbs.forEach(cb => cb.addEventListener("change", updateOverallCompletion));
-    updateOverallCompletion();
+  });
+  updateOverallCompletion();
 }
 
-// Xử lý thay bài dựa trên nhóm cơ được chọn từ dropdown
 function handleReplaceClick(e) {
-    const btn = e.target.closest(".replace-ex-btn");
-    if (!btn) return;
-    const idx = parseInt(btn.getAttribute("data-idx"));
-    if (isNaN(idx)) return;
-    const oldEx = currentExercises[idx];
-    if (!oldEx) return;
-
-    // Lấy giá trị nhóm cơ từ dropdown tương ứng
-    const selectEl = document.querySelector(`.muscle-select-${idx}`);
-    let targetMuscleGroup = oldEx.muscleGroup;
-    if (selectEl && selectEl.value) {
-        targetMuscleGroup = selectEl.value;
-    }
-
-    // Tìm bài thay thế từ nhóm cơ đã chọn (không lấy chính bài hiện tại)
-    const kneeScore = parseInt(document.getElementById("kneeStatus").value); 
-    let alts = getAlternativeExercises(targetMuscleGroup, oldEx.name, kneeScore);
-    if (alts.length === 0) {
-        // Nếu không có bài thay thế khác trong nhóm đó (có thể chỉ có 1 bài), thông báo và thoát
-        alert(`Không tìm thấy bài tập thay thế nào khác trong nhóm "${targetMuscleGroup}". Hãy chọn nhóm cơ khác hoặc giữ nguyên.`);
-        return;
-    }
-    const newEx = alts[Math.floor(Math.random() * alts.length)];
-    // Cập nhật mảng currentExercises
-    currentExercises[idx] = newEx;
-
-    // Lưu trạng thái hoàn thành hiện tại trước khi refresh
-    const completionState = saveCompletionState();
-    // Render lại toàn bộ để cập nhật giao diện và dropdown mới
-    renderDetailedWorkout(currentExercises);
-    // Khôi phục trạng thái check (các bài khác giữ nguyên, bài vừa thay sẽ unchecked vì nội dung mới)
-    restoreCompletionState(completionState);
-    // Đảm bảo checkbox bài vừa thay được reset (bỏ tick)
-    const newCb = document.querySelector(`.exercise-detail #ex-${idx} .complete-check`);
-    if (newCb) newCb.checked = false;
-    updateOverallCompletion();
+  const btn = e.target.closest(".replace-ex-btn");
+  if (!btn) return;
+  const idx = parseInt(btn.getAttribute("data-idx"));
+  if (isNaN(idx)) return;
+  const oldEx = currentExercises[idx];
+  if (!oldEx) return;
+  const selectEl = document.querySelector(`.muscle-select-${idx}`);
+  let targetMuscleGroup = oldEx.muscleGroup;
+  if (selectEl && selectEl.value) targetMuscleGroup = selectEl.value;
+  const kneeScore = parseInt(document.getElementById("kneeStatus").value);
+  let alts = getAlternativeExercises(targetMuscleGroup, oldEx.name, kneeScore);
+  if (alts.length === 0) { alert(`Không tìm thấy bài thay thế trong nhóm "${targetMuscleGroup}".`); return; }
+  const newEx = alts[Math.floor(Math.random() * alts.length)];
+  currentExercises[idx] = newEx;
+  const completionState = saveCompletionState();
+  _workoutListenerAttached = false;
+  renderDetailedWorkout(currentExercises);
+  restoreCompletionState(completionState);
+  const newCb = document.querySelector(`#ex-${idx} .complete-check`);
+  if (newCb) { newCb.checked = false; document.querySelector(`#ex-${idx}`).classList.remove("done"); }
+  updateOverallCompletion();
 }
 
 function buildWorkoutProgram(kneeScore, durationMin) {
-    let pool = Object.entries(exerciseLibrary)
-        .filter(([key]) => key !== "warmup" && key !== "cooldown")
-        .map(([, ex]) => ex)
-        .filter(ex => !(ex.kneeRisk && kneeScore < 4));
-
-    let selected  = [exerciseLibrary.warmup];
-    // FIX 1: bỏ giới hạn 10 bài cứng, tính theo thời gian thực
-    let remaining = durationMin - exerciseLibrary.warmup.time - exerciseLibrary.cooldown.time;
-    let usedNames  = new Set([exerciseLibrary.warmup.name]);
-    let groupCount = {};  // đếm số bài mỗi nhóm để cân bằng
-
-    while (remaining > 1.5) {
-        let candidates = pool.filter(ex =>
-            ex.time <= remaining && !usedNames.has(ex.name)
-        );
-        if (candidates.length === 0) break;
-
-        // FIX 2: ưu tiên nhóm cơ ít bài nhất (cân bằng), không chặn cứng
-        candidates.sort((a, b) => {
-            let countA = groupCount[a.muscleGroup] || 0;
-            let countB = groupCount[b.muscleGroup] || 0;
-            return countA - countB;
-        });
-
-        // Lấy ngẫu nhiên trong top 3 ứng viên ít nhóm nhất
-        let topCandidates = candidates.slice(0, Math.min(3, candidates.length));
-        let pick = topCandidates[Math.floor(Math.random() * topCandidates.length)];
-
-        selected.push(pick);
-        usedNames.add(pick.name);
-        remaining -= pick.time;
-        groupCount[pick.muscleGroup] = (groupCount[pick.muscleGroup] || 0) + 1;
-    }
-
-    selected.push(exerciseLibrary.cooldown);
-    return selected;
+  let pool = Object.entries(exerciseLibrary)
+    .filter(([key]) => key !== "warmup" && key !== "cooldown")
+    .map(([, ex]) => ex)
+    .filter(ex => !(ex.kneeRisk && kneeScore < 4));
+  let selected = [exerciseLibrary.warmup];
+  let remaining = durationMin - exerciseLibrary.warmup.time - exerciseLibrary.cooldown.time;
+  let usedNames = new Set([exerciseLibrary.warmup.name]);
+  let groupCount = {};
+  while (remaining > 1.5) {
+    let candidates = pool.filter(ex => ex.time <= remaining && !usedNames.has(ex.name));
+    if (candidates.length === 0) break;
+    candidates.sort((a, b) => (groupCount[a.muscleGroup]||0) - (groupCount[b.muscleGroup]||0));
+    let top = candidates.slice(0, Math.min(3, candidates.length));
+    let pick = top[Math.floor(Math.random() * top.length)];
+    selected.push(pick);
+    usedNames.add(pick.name);
+    remaining -= pick.time;
+    groupCount[pick.muscleGroup] = (groupCount[pick.muscleGroup]||0) + 1;
+  }
+  selected.push(exerciseLibrary.cooldown);
+  return selected;
 }
 
 document.getElementById("generateWorkoutBtn").addEventListener("click", () => {
-    let knee = parseInt(document.getElementById("kneeStatus").value);
-    let mins = parseInt(document.getElementById("freeMinutes").value);
-    _workoutListenerAttached = false; // reset để gắn lại sự kiện sau khi render mới
-    let exs = buildWorkoutProgram(knee, Math.min(mins, 90));
-    renderDetailedWorkout(exs);
+  const knee = parseInt(document.getElementById("kneeStatus").value);
+  const mins = parseInt(document.getElementById("freeMinutes").value);
+  _workoutListenerAttached = false;
+  renderDetailedWorkout(buildWorkoutProgram(knee, Math.min(mins, 90)));
 });
 
 document.getElementById("saveWorkoutSessionBtn").addEventListener("click", () => {
-    if (!currentExercises.length) { alert("Hãy tạo bài tập trước"); return; }
-    let completion   = window.currentCompletion || 0;
-    let duration     = Math.round(currentExercises.reduce((s, e) => s + e.time, 0));
-    let calo         = calculateCalories(5.0, appData.currentWeight, duration);
-    
-    // Xử lý muscleGroups: chuyển "Toàn thân" thành 4 nhóm chính
-    let rawGroups = currentExercises.map(e => e.muscleGroup);
-    let expandedGroups = [];
-    rawGroups.forEach(g => {
-        if (g === "Toàn thân") {
-            expandedGroups.push("Chân-Mông", "Core", "Ngực-Vai-Tay", "Lưng trên");
-        } else {
-            expandedGroups.push(g);
-        }
-    });
-    let muscleGroups = [...new Set(expandedGroups)]; // loại bỏ trùng
-    
-    let date = document.getElementById("workoutDate").value || new Date().toISOString().slice(0, 10);
-    addSession({ type:"guided", activityName:"Bài tập FlexiFit", date, durationMin:duration, totalCalo:calo, completionRatio:completion, muscleGroups });
-    alert(`✅ Đã lưu!\n⏱️ ${duration} phút · 🔥 ${calo} kcal · ✅ ${completion}% hoàn thành`);
+  if (!currentExercises.length) { alert("Hãy tạo bài tập trước"); return; }
+  const completion = window.currentCompletion || 0;
+  const duration = Math.round(currentExercises.reduce((s, e) => s + e.time, 0));
+  const calo = calculateCalories(5.0, appData.currentWeight, duration);
+  let rawGroups = currentExercises.map(e => e.muscleGroup);
+  let expanded = [];
+  rawGroups.forEach(g => {
+    if (g === "Toàn thân") expanded.push("Chân-Mông","Core","Ngực-Vai-Tay","Lưng trên");
+    else expanded.push(g);
+  });
+  const muscleGroups = [...new Set(expanded)];
+  const date = document.getElementById("workoutDate").value || new Date().toISOString().slice(0,10);
+  addSession({ type:"guided", activityName:"Bài tập FlexiFit", date, durationMin:duration, totalCalo:calo, completionRatio:completion, muscleGroups });
+  alert(`✅ Đã lưu!\n⏱️ ${duration} phút · 🔥 ${calo} kcal · ✅ ${completion}% hoàn thành`);
 });
 
-// ==================== THỂ THAO ====================
+// ==================== SPORT ====================
 function previewSport() {
-    let type = document.getElementById("sportType").value;
-    let mins = parseInt(document.getElementById("sportMinutes").value) || 0;
-    let calo = calculateCalories(METS[type], appData.currentWeight, mins);
-    document.getElementById("sportCaloPreview").innerHTML = `🔥 Calo: ${calo} kcal`;
+  const type = document.getElementById("sportType").value;
+  const mins = parseInt(document.getElementById("sportMinutes").value) || 0;
+  const calo = calculateCalories(METS[type], appData.currentWeight, mins);
+  document.getElementById("sportCaloPreview").textContent = `🔥 Calo ước tính: ${calo} kcal`;
 }
 document.getElementById("sportType").addEventListener("change", previewSport);
 document.getElementById("sportMinutes").addEventListener("input", previewSport);
 previewSport();
 
 document.getElementById("addSportBtn").addEventListener("click", () => {
-    let type         = document.getElementById("sportType").value;
-    let mins         = parseInt(document.getElementById("sportMinutes").value);
-    let calo         = calculateCalories(METS[type], appData.currentWeight, mins);
-    let rawGroups    = sportMuscleMap[type] || ["Toàn thân"];
-    let expandedGroups = [];
-    rawGroups.forEach(g => {
-        if (g === "Toàn thân") {
-            expandedGroups.push("Chân-Mông", "Core", "Ngực-Vai-Tay", "Lưng trên");
-        } else {
-            expandedGroups.push(g);
-        }
-    });
-    let muscleGroups = [...new Set(expandedGroups)];
-    let date         = document.getElementById("sportDate").value || new Date().toISOString().slice(0, 10);
-    addSession({ type:"sport", activityName:SPORT_NAMES[type], date, durationMin:mins, totalCalo:calo, muscleGroups, completionRatio:100 });
-    alert(`✅ Đã thêm ${SPORT_NAMES[type]}\n⏱️ ${mins} phút · 🔥 ${calo} kcal\n💪 Nhóm cơ: ${muscleGroups.join(", ")}`);
+  const type = document.getElementById("sportType").value;
+  const mins = parseInt(document.getElementById("sportMinutes").value);
+  const calo = calculateCalories(METS[type], appData.currentWeight, mins);
+  let rawGroups = sportMuscleMap[type] || ["Toàn thân"];
+  let expanded = [];
+  rawGroups.forEach(g => {
+    if (g === "Toàn thân") expanded.push("Chân-Mông","Core","Ngực-Vai-Tay","Lưng trên");
+    else expanded.push(g);
+  });
+  const muscleGroups = [...new Set(expanded)];
+  const date = document.getElementById("sportDate").value || new Date().toISOString().slice(0,10);
+  addSession({ type:"sport", activityName:SPORT_NAMES[type], date, durationMin:mins, totalCalo:calo, muscleGroups, completionRatio:100 });
+  alert(`✅ Đã thêm ${SPORT_NAMES[type]}\n⏱️ ${mins} phút · 🔥 ${calo} kcal`);
 });
 
-// ==================== CÂN NẶNG & BIỂU ĐỒ ====================
-let weightChart = null;
-function drawWeightChart() {
-    if (weightChart) { weightChart.destroy(); weightChart = null; }
-    let sorted = [...appData.weightHistory].sort((a, b) => new Date(a.date) - new Date(b.date));
-    if (sorted.length === 0) return;
-    let labels = sorted.map(w => w.date.slice(5));
-    let data   = sorted.map(w => w.weight);
-    let ctx    = document.getElementById("weightChartCanvas").getContext("2d");
-    weightChart = new Chart(ctx, {
-        type: "line",
-        data: { labels, datasets: [{ label:"Cân nặng (kg)", data, borderColor:"#2b7a4b", backgroundColor:"rgba(43,122,75,0.08)", tension:0.3, pointRadius:4 }] },
-        options: { responsive:true, plugins:{ legend:{ display:true } } }
-    });
+// ==================== WEIGHT ====================
+document.getElementById("updateWeightBtn").addEventListener("click", () => {
+  const newW = parseFloat(document.getElementById("weightUpdate").value);
+  if (isNaN(newW) || newW <= 0) { alert("Vui lòng nhập cân nặng hợp lệ"); return; }
+  appData.currentWeight = newW;
+  appData.weightHistory.push({ date: new Date().toISOString().slice(0,10), weight: newW });
+  document.getElementById("currentWeightSpan").innerText = newW;
+  saveAppData();
+});
+
+// ==================== HISTORY ====================
+function renderHistoryTab() {
+  const container = document.getElementById("historyList");
+  if (!container) return;
+  if (!appData.workoutSessions.length) {
+    container.innerHTML = `<p style="color:var(--text-muted); font-size:0.85rem; padding:16px 0;">Chưa có dữ liệu hoạt động nào.</p>`;
+    return;
+  }
+  let html = "";
+  [...appData.workoutSessions].reverse().forEach((session, idx) => {
+    const originalIndex = appData.workoutSessions.length - 1 - idx;
+    const muscles = Array.isArray(session.muscleGroups) ? session.muscleGroups.join(", ") : "";
+    html += `<div class="history-item">
+      <input type="checkbox" class="history-checkbox history-check" data-index="${originalIndex}">
+      <div class="history-info">
+        <div class="history-date">${session.date}</div>
+        <div class="history-name">${session.activityName}</div>
+        <div class="history-stats">⏱️ ${session.durationMin}' ${muscles ? `· 💪 ${muscles}` : ''} ${session.completionRatio ? `· ✅ ${session.completionRatio}%` : ''}</div>
+      </div>
+      <div class="history-calo">🔥 ${session.totalCalo} kcal</div>
+    </div>`;
+  });
+  container.innerHTML = html;
+
+  document.getElementById("selectAllHistoryBtn").onclick = () => {
+    document.querySelectorAll(".history-checkbox").forEach(cb => cb.checked = true);
+  };
+  document.getElementById("deleteSelectedHistoryBtn").onclick = () => {
+    const checkboxes = document.querySelectorAll(".history-checkbox:checked");
+    if (checkboxes.length === 0) { alert("Chưa chọn mục nào."); return; }
+    if (confirm(`Xóa ${checkboxes.length} mục?`)) {
+      const indices = Array.from(checkboxes).map(cb => parseInt(cb.dataset.index)).sort((a,b) => b-a);
+      indices.forEach(i => appData.workoutSessions.splice(i, 1));
+      saveAppData();
+    }
+  };
+  document.getElementById("clearHistoryBtn").onclick = () => {
+    if (confirm("Xóa toàn bộ lịch sử?")) { appData.workoutSessions = []; saveAppData(); }
+  };
 }
 
-document.getElementById("updateWeightBtn").addEventListener("click", () => {
-    let newW = parseFloat(document.getElementById("weightUpdate").value);
-    if (isNaN(newW) || newW <= 0) { alert("Vui lòng nhập cân nặng hợp lệ"); return; }
-    appData.currentWeight = newW;
-    appData.weightHistory.push({ date:new Date().toISOString().slice(0, 10), weight:newW });
-    saveAppData();
-    document.getElementById("currentWeightSpan").innerText = newW;
-    drawWeightChart();
-});
-
-// ==================== XUẤT EXCEL ====================
+// ==================== EXPORT ====================
 document.getElementById("exportExcelBtn").addEventListener("click", () => {
-    let rows = [["Ngày","Hoạt động","Thời gian (phút)","Calo tiêu hao","Hoàn thành (%)","Nhóm cơ"]];
-    appData.workoutSessions.forEach(s => {
-        let muscleStr = Array.isArray(s.muscleGroups) ? s.muscleGroups.join(", ") : "";
-        rows.push([s.date, s.activityName, s.durationMin, s.totalCalo, s.completionRatio || "", muscleStr]);
-    });
-    rows.push([], ["--- CÂN NẶNG ---", "", "", "", ""]);
-    rows.push(["Ngày", "Cân nặng (kg)", "", "", "", ""]);
-    appData.weightHistory.forEach(w => {
-        rows.push([w.date, w.weight, "", "", "", ""]);
-    });
-    let csvContent = rows.map(row => row.map(cell => `"${cell}"`).join(",")).join("\n");
-    let blob = new Blob(["\uFEFF" + csvContent], { type:"text/csv;charset=utf-8;" });
-    let link = document.createElement("a");
-    let url  = URL.createObjectURL(blob);
-    link.href = url;
-    link.setAttribute("download", "flexifit_v9_data.csv");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+  let rows = [["Ngày","Hoạt động","Thời gian (phút)","Calo tiêu hao","Hoàn thành (%)","Nhóm cơ"]];
+  appData.workoutSessions.forEach(s => {
+    rows.push([s.date, s.activityName, s.durationMin, s.totalCalo, s.completionRatio||"", Array.isArray(s.muscleGroups)?s.muscleGroups.join(", "):""])
+  });
+  rows.push([],[" --- CÂN NẶNG ---"]);
+  rows.push(["Ngày","Cân nặng (kg)"]);
+  appData.weightHistory.forEach(w => rows.push([w.date, w.weight]));
+  const csvContent = rows.map(row => row.map(cell => `"${cell}"`).join(",")).join("\n");
+  const blob = new Blob(["\uFEFF" + csvContent], { type:"text/csv;charset=utf-8;" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.setAttribute("download", "flexifit_data.csv");
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 });
 
-// ==================== ĐỒNG BỘ GIST ====================
-// BACKUP
+// ==================== SYNC GIST ====================
+function loadSyncSettings() {
+  const savedToken = localStorage.getItem("flexifit_github_token");
+  const savedGistId = localStorage.getItem("flexifit_gist_id");
+  if (savedToken) document.getElementById("githubToken").value = savedToken;
+  if (savedGistId) document.getElementById("gistId").value = savedGistId;
+}
+function saveSyncSettings() {
+  const token = document.getElementById("githubToken").value.trim();
+  const gistId = document.getElementById("gistId").value.trim();
+  if (token) localStorage.setItem("flexifit_github_token", token); else localStorage.removeItem("flexifit_github_token");
+  if (gistId) localStorage.setItem("flexifit_gist_id", gistId); else localStorage.removeItem("flexifit_gist_id");
+}
+
 document.getElementById("backupToGistBtn").addEventListener("click", async () => {
-    let token = document.getElementById("githubToken").value.trim();
-    let gistId = document.getElementById("gistId").value.trim();
-    if (!token) { alert("🔑 Nhập GitHub token (cần quyền gist)"); return; }
-    let content = JSON.stringify({ appData, version: "v9", backupDate: new Date().toISOString() }, null, 2);
-    let url = gistId ? `https://api.github.com/gists/${gistId}` : "https://api.github.com/gists";
-    let method = gistId ? "PATCH" : "POST";
-    let body = {
-        description: "FlexiFit Pro backup - " + new Date().toLocaleString(),
-        public: false,
-        files: { "flexifit_backup.json": { content } }
-    };
-    try {
-        let res = await fetch(url, {
-            method,
-            headers: { "Authorization": `Bearer ${token}`, "Accept": "application/vnd.github+json" },
-            body: JSON.stringify(body)
-        });
-        let json = await res.json();
-        if (res.ok) {
-            if (!gistId) document.getElementById("gistId").value = json.id;
-            document.getElementById("gistStatus").innerHTML = `✅ Sao lưu thành công! ID: ${json.id}`;
-            document.getElementById("gistStatus").style.background = "#d1fae5";
-        } else {
-            alert("Lỗi GitHub: " + (json.message || JSON.stringify(json)));
-            document.getElementById("gistStatus").innerHTML = `❌ Lỗi: ${json.message}`;
-        }
-    } catch(e) { alert("Lỗi kết nối: " + e.message); }
-});
-
-// RESTORE
-document.getElementById("restoreFromGistBtn").addEventListener("click", async () => {
-    let gistId = document.getElementById("gistId").value.trim();
-    let token = document.getElementById("githubToken").value.trim();
-    if (!gistId) { alert("Nhập Gist ID"); return; }
-    if (!token) {
-        if (!confirm("Chưa nhập token. Nếu Gist là private sẽ không restore được. Tiếp tục?")) return;
+  const token = document.getElementById("githubToken").value.trim();
+  const gistId = document.getElementById("gistId").value.trim();
+  if (!token) { alert("Nhập GitHub token"); return; }
+  const content = JSON.stringify({ appData, version:"v9", backupDate:new Date().toISOString() }, null, 2);
+  const url = gistId ? `https://api.github.com/gists/${gistId}` : "https://api.github.com/gists";
+  const method = gistId ? "PATCH" : "POST";
+  const body = { description:"FlexiFit Pro backup - "+new Date().toLocaleString(), public:false, files:{ "flexifit_backup.json":{ content } } };
+  try {
+    const res = await fetch(url, { method, headers:{ "Authorization":`Bearer ${token}`, "Accept":"application/vnd.github+json" }, body:JSON.stringify(body) });
+    const json = await res.json();
+    const statusEl = document.getElementById("gistStatus");
+    if (res.ok) {
+      if (!gistId) document.getElementById("gistId").value = json.id;
+      statusEl.innerHTML = `✅ Sao lưu thành công! Gist ID: <strong style="color:var(--accent)">${json.id}</strong>`;
+      saveSyncSettings();
+    } else {
+      statusEl.textContent = `❌ Lỗi: ${json.message}`;
     }
-    try {
-        let headers = { "Accept": "application/vnd.github+json" };
-        if (token) headers["Authorization"] = `Bearer ${token}`;
-        let res = await fetch(`https://api.github.com/gists/${gistId}`, { headers });
-        let json = await res.json();
-        if (!res.ok) {
-            alert(`Lỗi ${res.status}: ${json.message}`);
-            return;
-        }
-        if (!json.files || !json.files["flexifit_backup.json"]) {
-            alert("Không tìm thấy file flexifit_backup.json trong Gist.");
-            return;
-        }
-        let saved = JSON.parse(json.files["flexifit_backup.json"].content);
-        if (!saved.appData) throw new Error("File backup không đúng cấu trúc");
-        appData = saved.appData;
-        // Đảm bảo dữ liệu đầy đủ
-        if (!appData.weightHistory) appData.weightHistory = [];
-        if (!appData.workoutSessions) appData.workoutSessions = [];
-        if (!appData.weeklyGoal) appData.weeklyGoal = { type: "sessions", target: 4 };
-        saveAppData();
-        alert("✅ Khôi phục thành công! Trang sẽ tải lại.");
-        location.reload();
-    } catch(e) { alert("Lỗi: " + e.message); }
+  } catch(e) { alert("Lỗi kết nối: " + e.message); }
 });
 
-// ==================== TAB, MỤC TIÊU, LỊCH SỬ ====================
-//document.getElementById("clearHistoryBtn").addEventListener("click", () => {
- //   if (confirm("Xóa toàn bộ lịch sử?")) { appData.workoutSessions = []; saveAppData(); }
-//});
+document.getElementById("restoreFromGistBtn").addEventListener("click", async () => {
+  const gistId = document.getElementById("gistId").value.trim();
+  const token = document.getElementById("githubToken").value.trim();
+  if (!gistId) { alert("Nhập Gist ID"); return; }
+  try {
+    const headers = { "Accept":"application/vnd.github+json" };
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+    const res = await fetch(`https://api.github.com/gists/${gistId}`, { headers });
+    const json = await res.json();
+    if (!res.ok) { alert(`Lỗi ${res.status}: ${json.message}`); return; }
+    if (!json.files || !json.files["flexifit_backup.json"]) { alert("Không tìm thấy file flexifit_backup.json trong Gist."); return; }
+    const saved = JSON.parse(json.files["flexifit_backup.json"].content);
+    if (!saved.appData) throw new Error("File backup không đúng cấu trúc");
+    appData = saved.appData;
+    if (!appData.weightHistory) appData.weightHistory = [];
+    if (!appData.workoutSessions) appData.workoutSessions = [];
+    if (!appData.weeklyGoal) appData.weeklyGoal = { type:"sessions", target:4 };
+    saveAppData();
+    alert("✅ Khôi phục thành công!");
+    location.reload();
+  } catch(e) { alert("Lỗi: " + e.message); }
+});
 
+// ==================== TABS ====================
 document.querySelectorAll(".tab-btn").forEach(btn => btn.addEventListener("click", () => {
-    let tab = btn.getAttribute("data-tab");
-    document.querySelectorAll(".tab-pane").forEach(p => p.classList.remove("active-pane"));
-    document.getElementById(tab).classList.add("active-pane");
-    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    if (tab === "historyTab") renderHistoryTab();
-    if (tab === "muscleTab")  updateMuscleStats();
-    if (tab === "weightTab") drawWeightChart();
+  const tab = btn.getAttribute("data-tab");
+  document.querySelectorAll(".tab-pane").forEach(p => p.classList.remove("active-pane"));
+  document.getElementById(tab).classList.add("active-pane");
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  if (tab === "historyTab") renderHistoryTab();
+  if (tab === "muscleTab") updateMuscleStats();
+  if (tab === "weightTab") setTimeout(drawWeightChart, 50);
 }));
 
-document.getElementById("goalType").addEventListener("change",  () => { appData.weeklyGoal.type   = document.getElementById("goalType").value;            saveAppData(); });
+document.getElementById("goalType").addEventListener("change", () => { appData.weeklyGoal.type = document.getElementById("goalType").value; saveAppData(); });
 document.getElementById("goalValue").addEventListener("change", () => { appData.weeklyGoal.target = parseFloat(document.getElementById("goalValue").value); saveAppData(); });
 
-// ==================== KHỞI ĐỘNG ====================
+// ==================== INIT ====================
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("ageInput").addEventListener("change", () => {
+    appData.age = parseInt(document.getElementById("ageInput").value) || 35;
+    saveAppData();
+  });
+  document.getElementById("targetWeightInput").addEventListener("change", () => {
+    const newTarget = parseFloat(document.getElementById("targetWeightInput").value);
+    if (isNaN(newTarget)) return;
+    appData.targetWeight = newTarget;
+    saveAppData();
+    const newWeeklyTarget = calculateWeeklyTargetCalories(appData.currentWeight, appData.age, appData.targetWeight);
+    alert(`✅ Đã cập nhật cân nặng mục tiêu: ${newTarget} kg\n📊 Mục tiêu calo tuần mới: ${Math.round(newWeeklyTarget)} kcal\n👉 Hãy vào tab "Vùng cơ" để xem chi tiết từng nhóm.`);
+    updateMuscleStats(); 
+    console.log("New target per muscle:", targetCalPerGroup); // để debug// cập nhật ngay lập tức các thanh tiến trình
+  });
+  document.getElementById("githubToken").addEventListener("input", saveSyncSettings);
+  document.getElementById("gistId").addEventListener("input", saveSyncSettings);
+  loadSyncSettings();
+  document.getElementById("workoutDate").value = new Date().toISOString().slice(0,10);
+  document.getElementById("sportDate").value = new Date().toISOString().slice(0,10);
+});
+
 loadAppData();
-// ==================== TỰ ĐỘNG LƯU TOKEN & GIST ID ====================
-function loadSyncSettings() {
-    const savedToken = localStorage.getItem("flexifit_github_token");
-    const savedGistId = localStorage.getItem("flexifit_gist_id");
-    if (savedToken) document.getElementById("githubToken").value = savedToken;
-    if (savedGistId) document.getElementById("gistId").value = savedGistId;
-}
-
-function saveSyncSettings() {
-    const token = document.getElementById("githubToken").value.trim();
-    const gistId = document.getElementById("gistId").value.trim();
-    if (token) localStorage.setItem("flexifit_github_token", token);
-    else localStorage.removeItem("flexifit_github_token");
-    if (gistId) localStorage.setItem("flexifit_gist_id", gistId);
-    else localStorage.removeItem("flexifit_gist_id");
-}
-
-// Gắn sự kiện lưu khi người dùng nhập
-document.getElementById("githubToken").addEventListener("input", saveSyncSettings);
-document.getElementById("gistId").addEventListener("input", saveSyncSettings);
-
-// Gọi khôi phục sau loadAppData
-loadSyncSettings();
-document.getElementById("workoutDate").value = new Date().toISOString().slice(0, 10);
-document.getElementById("sportDate").value   = new Date().toISOString().slice(0, 10);
 </script>
 </body>
 </html>
