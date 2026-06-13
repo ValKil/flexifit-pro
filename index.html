@@ -717,7 +717,7 @@ function getTotalCaloriesCurrentWeek() {
 function updateCurrentWeekAchievement() {
   const now = new Date();
   const currentWeekNum = getWeekNumber(now);
-  let totalCalo = getTotalCaloriesCurrentWeek;
+  let totalCalo = getTotalCaloriesCurrentWeek();
   const isDeload = isDeloadWeek();
   const target = calculateWeeklyTargetCalories(appData.currentWeight, appData.age, appData.targetWeight, isDeload);
   const achieved = totalCalo >= target;
@@ -883,7 +883,7 @@ function updateMuscleStats() {
     const color = percentToColor(percents[mg]);
   window._lastMusclePercents = percents;
   if (window.applyMuscleColors) window.applyMuscleColors(percents);
-    });
+ 
   });
 
   // Gợi ý nhóm cơ thiếu nhiều nhất
@@ -1889,13 +1889,13 @@ function buildWorkoutProgram(kneeScore, durationMin) {
   while (remaining > 1.5) {
     let candidates = pool.filter(ex => ex.time <= remaining && !usedNames.has(ex.name));
     if (candidates.length === 0) break;
-    candidates.sort((a, b) => (groupCount[a.muscleGroup]||0) - (groupCount[b.muscleGroup]||0));
+    candidates.sort((a, b) => (groupCount[a.zone_key]||0) - (groupCount[b.zone_key]||0));
     let top = candidates.slice(0, Math.min(3, candidates.length));
     let pick = top[Math.floor(Math.random() * top.length)];
     selected.push(pick);
     usedNames.add(pick.name);
     remaining -= pick.time;
-    groupCount[pick.muscleGroup] = (groupCount[pick.muscleGroup]||0) + 1;
+    groupCount[a.zone_key] = (groupCount[a.zone_key]||0) + 1;
   }
   selected.push(exerciseLibrary.cooldown);
   return selected;
