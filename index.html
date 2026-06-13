@@ -25,6 +25,7 @@
   --radius-sm: 10px;
 }
 
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
@@ -455,6 +456,18 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
   color: var(--text-dim);
   margin-bottom: 12px;
 }
+
+.body-map-row { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin: 12px 0 20px; }
+.body-map-col { flex: 0 1 200px; }
+.body-svg { width: 100%; max-width: 200px; display: block; margin: 0 auto; }
+.body-outline { fill: var(--surface2); stroke: var(--border); stroke-width: 1.5; }
+.muscle-region { stroke: var(--bg); stroke-width: 1; fill: #555; cursor: pointer; transition: fill 0.4s; }
+.muscle-region:hover { stroke: var(--text); stroke-width: 2; }
+.muscle-card.compact { padding: 10px 12px; }
+.muscle-card.compact .muscle-card-name { font-size: 0.78rem; margin-bottom: 4px; }
+.muscle-card.compact .muscle-nums { font-size: 0.7rem; }
+
+
 </style>
 </head>
 <body>
@@ -557,16 +570,74 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
   </div>
 
   <!-- TAB: VÙNG CƠ -->
-  <div id="muscleTab" class="tab-pane">
-    <div class="card">
-      <div class="card-title">📊 Mục tiêu calo theo vùng cơ — 7 ngày qua</div>
-      <div class="suggestion-bar" id="muscleSuggestion">...</div>
-      <div class="muscle-grid" id="muscleStatsContainer"></div>
-      <div class="muscle-formula">
-        <strong>Công thức:</strong> Mục tiêu tuần = cân nặng × K (4.5–6.0) × 7 ngày. Phân bổ: Chân-Mông 35% · Lưng trên 25% · Ngực-Vai-Tay 20% · Core 20%.
+<div id="muscleTab" class="tab-pane">
+  <div class="card">
+    <div class="card-title">📊 Bản đồ cơ thể — 7 ngày qua</div>
+    <div class="suggestion-bar" id="muscleSuggestion">...</div>
+    <div class="body-map-row">
+      <div class="body-map-col">
+        <div class="section-label" style="text-align:center;">MẶT TRƯỚC</div>
+        <svg id="bodyFront" viewBox="0 0 200 340" class="body-svg">
+          <!-- outline -->
+          <circle cx="100" cy="28" r="22" class="body-outline"/>
+          <path d="M65,55 L135,55 L145,160 L55,160 Z" class="body-outline"/>
+          <rect x="38" y="60" width="20" height="95" rx="8" class="body-outline"/>
+          <rect x="142" y="60" width="20" height="95" rx="8" class="body-outline"/>
+          <rect x="68" y="160" width="64" height="150" rx="8" class="body-outline"/>
+
+          <!-- muscle regions -->
+          <rect x="78" y="56" width="44" height="10" class="muscle-region muscle-upper_trapezius"/>
+          <ellipse cx="58" cy="73" rx="15" ry="18" class="muscle-region muscle-front_deltoids"/>
+          <ellipse cx="142" cy="73" rx="15" ry="18" class="muscle-region muscle-front_deltoids"/>
+          <ellipse cx="46" cy="62" rx="8" ry="12" class="muscle-region muscle-side_deltoids"/>
+          <ellipse cx="154" cy="62" rx="8" ry="12" class="muscle-region muscle-side_deltoids"/>
+          <rect x="68" y="68" width="64" height="40" rx="8" class="muscle-region muscle-chest"/>
+          <rect x="42" y="95" width="16" height="45" rx="6" class="muscle-region muscle-biceps"/>
+          <rect x="142" y="95" width="16" height="45" rx="6" class="muscle-region muscle-biceps"/>
+          <rect x="40" y="145" width="16" height="40" rx="6" class="muscle-region muscle-forearms"/>
+          <rect x="144" y="145" width="16" height="40" rx="6" class="muscle-region muscle-forearms"/>
+          <rect x="78" y="110" width="44" height="55" rx="6" class="muscle-region muscle-abs"/>
+          <rect x="62" y="110" width="14" height="55" rx="4" class="muscle-region muscle-obliques"/>
+          <rect x="124" y="110" width="14" height="55" rx="4" class="muscle-region muscle-obliques"/>
+          <rect x="72" y="175" width="26" height="80" rx="6" class="muscle-region muscle-quadriceps"/>
+          <rect x="102" y="175" width="26" height="80" rx="6" class="muscle-region muscle-quadriceps"/>
+          <rect x="74" y="265" width="22" height="55" rx="6" class="muscle-region muscle-calves"/>
+          <rect x="104" y="265" width="22" height="55" rx="6" class="muscle-region muscle-calves"/>
+        </svg>
+      </div>
+      <div class="body-map-col">
+        <div class="section-label" style="text-align:center;">MẶT SAU</div>
+        <svg id="bodyBack" viewBox="0 0 200 340" class="body-svg">
+          <circle cx="100" cy="28" r="22" class="body-outline"/>
+          <path d="M65,55 L135,55 L145,160 L55,160 Z" class="body-outline"/>
+          <rect x="38" y="60" width="20" height="95" rx="8" class="body-outline"/>
+          <rect x="142" y="60" width="20" height="95" rx="8" class="body-outline"/>
+          <rect x="68" y="160" width="64" height="150" rx="8" class="body-outline"/>
+
+          <rect x="78" y="55" width="44" height="12" class="muscle-region muscle-upper_trapezius"/>
+          <ellipse cx="58" cy="73" rx="15" ry="18" class="muscle-region muscle-rear_deltoids"/>
+          <ellipse cx="142" cy="73" rx="15" ry="18" class="muscle-region muscle-rear_deltoids"/>
+          <rect x="68" y="68" width="64" height="48" rx="8" class="muscle-region muscle-lats_upper_back"/>
+          <rect x="42" y="95" width="16" height="45" rx="6" class="muscle-region muscle-triceps"/>
+          <rect x="142" y="95" width="16" height="45" rx="6" class="muscle-region muscle-triceps"/>
+          <rect x="40" y="145" width="16" height="40" rx="6" class="muscle-region muscle-forearms"/>
+          <rect x="144" y="145" width="16" height="40" rx="6" class="muscle-region muscle-forearms"/>
+          <rect x="76" y="118" width="48" height="40" rx="6" class="muscle-region muscle-lower_back"/>
+          <rect x="70" y="160" width="60" height="35" rx="10" class="muscle-region muscle-glutes"/>
+          <rect x="72" y="198" width="26" height="60" rx="6" class="muscle-region muscle-hamstrings"/>
+          <rect x="102" y="198" width="26" height="60" rx="6" class="muscle-region muscle-hamstrings"/>
+          <rect x="74" y="265" width="22" height="55" rx="6" class="muscle-region muscle-calves"/>
+          <rect x="104" y="265" width="22" height="55" rx="6" class="muscle-region muscle-calves"/>
+        </svg>
       </div>
     </div>
+    <div class="muscle-grid" id="muscleStatsContainer"></div>
+    <div class="muscle-formula">
+      <strong>Công thức:</strong> Mục tiêu tuần (tổng) = cân nặng × K (4.5–6.0) × 7 ngày, hiệu chỉnh theo tuổi.
+      Mục tiêu mỗi nhóm cơ = Tổng × % phân bổ (16 nhóm, theo mẫu nam giới). Màu cơ thể: 🔴 thấp → 🟢 đạt/vượt mục tiêu.
+    </div>
   </div>
+</div>
 
   <!-- TAB: LỊCH SỬ -->
   <div id="historyTab" class="tab-pane">
@@ -716,15 +787,15 @@ function getActualCaloriesPerMuscleLastNDays(days) {
   let start = new Date(now);
   start.setDate(now.getDate() - days);
   start.setHours(0,0,0,0);
-  let recent = appData.workoutSessions.filter(s => new Date(s.date) >= start && s.durationMin && s.totalCalo);
-  let calMap = { "Chân-Mông":0, "Core":0, "Ngực-Vai-Tay":0, "Lưng trên":0 };
+  let recent = appData.workoutSessions.filter(s => new Date(s.date) >= start);
+  let map = {};
+  MUSCLE_KEYS.forEach(m => map[m] = 0);
   recent.forEach(s => {
-    let groups = s.muscleGroups;
-    if (!Array.isArray(groups) || groups.length === 0) return;
-    let caloPerGroup = s.totalCalo / groups.length;
-    groups.forEach(g => { if (calMap[g] !== undefined) calMap[g] += caloPerGroup; });
+    if (s.muscleCalories) {
+      MUSCLE_KEYS.forEach(m => map[m] += (s.muscleCalories[m] || 0));
+    }
   });
-  return calMap;
+  return map;
 }
 
 // ==================== CHART ====================
@@ -829,30 +900,44 @@ function drawWeightChart() {
 
 // ==================== MUSCLE STATS ====================
 function updateMuscleStats() {
-  const muscleGroups = ["Chân-Mông", "Core", "Ngực-Vai-Tay", "Lưng trên"];
-  const targetRatios = { "Chân-Mông": 0.35, "Core": 0.20, "Ngực-Vai-Tay": 0.20, "Lưng trên": 0.25 };
   const isDeload = isDeloadWeek();
   const totalWeeklyCalTarget = calculateWeeklyTargetCalories(appData.currentWeight, appData.age, appData.targetWeight, isDeload);
-  let targetCalPerGroup = {};
-  for (let mg of muscleGroups) targetCalPerGroup[mg] = totalWeeklyCalTarget * targetRatios[mg];
   const actualCal = getActualCaloriesPerMuscleLastNDays(7);
+
   let html = "";
-  for (let mg of muscleGroups) {
+  let percents = {};
+  MUSCLE_KEYS.forEach(mg => {
+    let target = totalWeeklyCalTarget * MUSCLE_DISTRIBUTION[mg];
     let achieved = actualCal[mg] || 0;
-    let target = targetCalPerGroup[mg];
-    let percent = target > 0 ? Math.min(100, Math.round((achieved / target) * 100)) : 0;
+    let percent = target > 0 ? Math.round((achieved / target) * 100) : 0;
+    percents[mg] = percent;
     let remaining = Math.max(0, target - achieved);
-    html += `<div class="muscle-card">
-      <div class="muscle-card-name">${mg}</div>
-      <div class="muscle-nums"><span>Đã đạt</span><strong>${Math.round(achieved)} / ${Math.round(target)} kcal</strong></div>
-      <div class="progress-track"><div class="progress-fill" style="width:${percent}%"></div></div>
+    let displayPercent = Math.min(100, percent);
+    html += `<div class="muscle-card compact">
+      <div class="muscle-card-name">${MUSCLE_NAMES_VI[mg]}</div>
+      <div class="muscle-nums"><span>${Math.round(achieved)}/${Math.round(target)} kcal</span><strong>${percent}%</strong></div>
+      <div class="progress-track"><div class="progress-fill" style="width:${displayPercent}%; background:${percentToColor(percent)};"></div></div>
       ${remaining > 0
-        ? `<div class="muscle-remaining">⚠️ Còn thiếu ${Math.round(remaining)} kcal</div>`
-        : `<div class="muscle-ok">✅ Đạt mục tiêu</div>`}
+        ? `<div class="muscle-remaining" style="font-size:0.7rem;">⚠️ Thiếu ${Math.round(remaining)} kcal</div>`
+        : `<div class="muscle-ok" style="font-size:0.7rem;">✅ Đạt</div>`}
     </div>`;
-  }
+  });
   document.getElementById("muscleStatsContainer").innerHTML = html;
-  let deficits = muscleGroups.map(mg => ({ name: mg, remaining: Math.max(0, targetCalPerGroup[mg] - (actualCal[mg] || 0)) }));
+
+  // Cập nhật màu trên body map (cả mặt trước và sau)
+  MUSCLE_KEYS.forEach(mg => {
+    const color = percentToColor(percents[mg]);
+    document.querySelectorAll(`#bodyFront .muscle-${mg}, #bodyBack .muscle-${mg}`).forEach(el => {
+      el.style.fill = color;
+    });
+  });
+
+  // Gợi ý nhóm cơ thiếu nhiều nhất
+  let deficits = MUSCLE_KEYS.map(mg => {
+    let target = totalWeeklyCalTarget * MUSCLE_DISTRIBUTION[mg];
+    let achieved = actualCal[mg] || 0;
+    return { name: MUSCLE_NAMES_VI[mg], remaining: Math.max(0, target - achieved) };
+  });
   deficits.sort((a,b) => b.remaining - a.remaining);
   let top = deficits[0];
   const el = document.getElementById("muscleSuggestion");
@@ -942,75 +1027,744 @@ function updateWeeklyGoal() {
 
 // ==================== EXERCISE LIBRARY ====================
 const exerciseLibrary = {
-  warmup: { name: "🔥 Khởi động toàn thân", guide: "1. Xoay cổ nhẹ nhàng 5 vòng mỗi bên. 2. Xoay vai 10 lần tới, 10 lần lui. 3. Xoay cổ tay, cổ chân 10 vòng. 4. Gập người về trước, tay chạm mắt cá chân (gối hơi cong). 5. Xoay hông 10 vòng. 6. Chạy bước nhẹ tại chỗ 30 giây.", caution: "Không bật nảy, không xoay quá nhanh.", reps: "5 phút", time: 5, muscleGroup: "Toàn thân", kneeRisk: false },
-  cooldown: { name: "🧘 Thả lỏng & căng cơ", guide: "1. Ngồi duỗi chân, cúi người về trước kéo căng đùi sau (30s). 2. Nằm ngửa, ôm gối vào ngực mỗi bên 20s. 3. Căng cơ mông. 4. Hít thở sâu 5 nhịp.", caution: "Không kéo căng đến mức đau.", reps: "3 phút", time: 3, muscleGroup: "Toàn thân", kneeRisk: false },
-  clam: { name: "🐚 Clam Shell (vỏ sò)", guide: "Nằm nghiêng, gối gập 90°, hai chân chồng lên nhau. Giữ hai bàn chân chạm nhau, từ từ mở gối trên lên cao nhất có thể, giữ 2 giây, hạ chậm.", caution: "Không xoay hông. Nếu đau hông, giảm biên độ.", reps: "3 hiệp × 12 lần/bên", time: 2.5, muscleGroup: "Chân-Mông", kneeRisk: false },
-  gluteBridge: { name: "🌉 Cầu mông 1 chân", guide: "Nằm ngửa, co gối, bàn chân sát mông. Siết mông nâng hông lên cao, chân kia duỗi thẳng, giữ 2 giây, hạ chậm.", caution: "Không ưỡn lưng quá mức. Nếu gối yếu, tập cầu mông 2 chân trước.", reps: "3 hiệp × 10 lần/chân", time: 2.5, muscleGroup: "Chân-Mông", kneeRisk: false },
-  wallSquat: { name: "🧱 Squat tường", guide: "Tựa lưng vào tường, chân đưa ra trước 30–40cm. Trượt xuống đến khi đùi song song mặt đất, giữ 2 giây, đẩy lên.", caution: "Gối không vượt quá mũi chân. Nếu đau, chỉ hạ 45°.", reps: "3 hiệp × 12 lần", time: 2.5, muscleGroup: "Chân-Mông", kneeRisk: true },
-  deadliftTay: { name: "🏋️ Deadlift tạ đơn", guide: "Đứng rộng bằng hông, cầm tạ. Giữ lưng thẳng, hông gập về sau, hạ tạ dọc cẳng chân đến dưới đầu gối. Đẩy hông lên.", caution: "Lưng thẳng xuyên suốt. Không gù lưng, không khóa gối.", reps: "3 hiệp × 10 lần", time: 3, muscleGroup: "Chân-Mông", kneeRisk: false },
-  bulgarianSquat: { name: "🦵 Bulgarian Split Squat", guide: "Đặt một chân lên ghế cao ngang gối. Hạ thấp người cho gối sau gần chạm sàn, đẩy lên.", caution: "Gối trước không vượt mũi chân.", reps: "3 hiệp × 8 lần/chân", time: 3, muscleGroup: "Chân-Mông", kneeRisk: true },
-  lunges: { name: "🚶 Lunge tại chỗ", guide: "Bước một chân dài về trước, hạ gối sau gần sàn (gối trước vuông góc). Đẩy về tư thế đứng, đổi bên.", caution: "Gối trước không vượt mũi chân.", reps: "3 hiệp × 10 lần/chân", time: 2.5, muscleGroup: "Chân-Mông", kneeRisk: true },
-  stepUp: { name: "📦 Step-up", guide: "Bước một chân lên bục cao 20–30cm, đưa chân kia theo, bước xuống, đổi chân.", caution: "Không dùng đà, kiểm soát toàn bộ.", reps: "3 hiệp × 10 lần/chân", time: 2.5, muscleGroup: "Chân-Mông", kneeRisk: true },
-  donkeyKick: { name: "🦵 Donkey Kick", guide: "Quỳ 4 điểm. Đá một chân lên trần, giữ gối gập 90°. Siết mông ở đỉnh.", caution: "Không võng lưng, không xoay hông.", reps: "3 hiệp × 15 lần/chân", time: 2, muscleGroup: "Chân-Mông", kneeRisk: false },
-  sideLegRaise: { name: "🦵 Nâng chân nghiêng", guide: "Nằm nghiêng, chân dưới co nhẹ. Nâng chân trên lên cao, giữ 1 giây, hạ chậm.", caution: "Không xoay hông về trước.", reps: "3 hiệp × 12 lần/bên", time: 2, muscleGroup: "Chân-Mông", kneeRisk: false },
-  squatJump: { name: "🏀 Squat bật nhảy", guide: "Squat bình thường, khi đứng lên bật nhẹ. Tiếp đất bằng nửa bàn chân trước, hạ gối mềm.", caution: "Chỉ tập khi gối 4–5.", reps: "3 hiệp × 8 lần", time: 2, muscleGroup: "Chân-Mông", kneeRisk: true },
-  calfRaise: { name: "🦵 Kiễng gót", guide: "Kiễng gót lên cao nhất, giữ 1 giây, hạ từ từ.", caution: "Giữ thăng bằng, không dùng đà.", reps: "3 hiệp × 15 lần", time: 1.5, muscleGroup: "Chân-Mông", kneeRisk: false },
-  fireHydrant: { name: "🚒 Fire Hydrant", guide: "Quỳ 4 điểm, đưa một chân sang ngang, giữ gối gập 90°. Siết mông ngoài.", caution: "Lưng thẳng, không nghiêng người.", reps: "3 hiệp × 12 lần/bên", time: 2, muscleGroup: "Chân-Mông", kneeRisk: false },
-  frogPump: { name: "🐸 Frog Pump", guide: "Nằm ngửa, áp hai lòng bàn chân vào nhau. Siết mông nâng hông lên rồi hạ chạm nhẹ.", caution: "Tập trung lực vào mông, không dùng lưng dưới.", reps: "3 hiệp × 15 lần", time: 2, muscleGroup: "Chân-Mông", kneeRisk: false },
-  kneelingSquat: { name: "🧎 Squat quỳ", guide: "Quỳ hai gối, hạ mông xuống gót chân, đẩy thẳng dậy, siết mạnh mông.", caution: "Lót thảm dày.", reps: "3 hiệp × 15 lần", time: 2, muscleGroup: "Chân-Mông", kneeRisk: false },
-  gluteBridgeHold: { name: "🌉 Cầu mông giữ tĩnh", guide: "Nằm ngửa, co gối, nâng hông. Siết mông, giữ tư thế, hít thở đều.", caution: "Không ưỡn lưng dưới quá mức.", reps: "3 hiệp × 30 giây", time: 2, muscleGroup: "Chân-Mông", kneeRisk: false },
-  rainbowKicks: { name: "🌈 Rainbow Kicks", guide: "Quỳ 4 điểm, duỗi thẳng một chân ra sau. Vẽ đường vòng cung sang trái rồi sang phải.", caution: "Không lắc lư người.", reps: "3 hiệp × 12 lần/bên", time: 2.5, muscleGroup: "Chân-Mông", kneeRisk: false },
-  singleLegDeadliftBody: { name: "🧍 Deadlift 1 chân tay không", guide: "Trụ bằng một chân, gập người từ hông về trước, đá chân kia ra sau song song sàn.", caution: "Lưng thẳng, gối chân trụ hơi trùng.", reps: "3 hiệp × 8 lần/chân", time: 2.5, muscleGroup: "Chân-Mông", kneeRisk: false },
-  lateralLegWalk: { name: "🦀 Đi bộ ngang", guide: "Hơi trùng gối nhẹ, bước sang trái 10 bước rồi ngược lại.", caution: "Giữ khoảng cách hai chân rộng bằng hông.", reps: "3 hiệp × 20 bước", time: 2, muscleGroup: "Chân-Mông", kneeRisk: false },
-  singleLegCalfRaise: { name: "🦿 Kiễng gót 1 chân", guide: "Co một chân, kiễng gót cao nhất có thể, hạ chậm.", caution: "Có thể bám nhẹ tường.", reps: "3 hiệp × 12 lần/chân", time: 2, muscleGroup: "Chân-Mông", kneeRisk: false },
-  plankKnee: { name: "🧘 Plank từ gối", guide: "Chống hai cẳng tay, gối chạm sàn, siết bụng, giữ lưng thẳng.", caution: "Không võng lưng.", reps: "3 hiệp × 20–30 giây", time: 2, muscleGroup: "Core", kneeRisk: false },
-  deadbug: { name: "🪲 Dead Bug", guide: "Nằm ngửa, co gối 90°, tay giơ thẳng lên. Duỗi chân trái và hạ tay phải xuống (không chạm sàn), đổi bên.", caution: "Thắt lưng áp sát sàn xuyên suốt.", reps: "3 hiệp × 8 lần/bên", time: 2.5, muscleGroup: "Core", kneeRisk: false },
-  legRaise: { name: "🦵 Nâng chân đơn", guide: "Nằm ngửa, nâng một chân lên 45°, giữ 2 giây, hạ chậm.", caution: "Không để lưng cong khỏi sàn.", reps: "3 hiệp × 10 lần/chân", time: 2, muscleGroup: "Core", kneeRisk: false },
-  russianTwist: { name: "🔄 Russian Twist", guide: "Ngồi ngả lưng, xoay thân sang trái rồi sang phải. Có thể cầm tạ nhẹ.", caution: "Không xoay quá nhanh.", reps: "3 hiệp × 12 lần/bên", time: 2.5, muscleGroup: "Core", kneeRisk: false },
-  bicycleCrunch: { name: "🚴 Bicycle Crunch", guide: "Nằm ngửa, tay sau đầu, đưa gối trái về phía khuỷu phải đồng thời duỗi chân phải, đổi bên.", caution: "Không kéo cổ, dùng bụng nâng vai.", reps: "3 hiệp × 15 lần/bên", time: 2.5, muscleGroup: "Core", kneeRisk: false },
-  flutterKicks: { name: "🏊 Flutter Kicks", guide: "Nằm ngửa, tay dưới mông, nâng hai chân 15cm, đạp lên xuống nhịp nhàng.", caution: "Lưng áp sàn, không nín thở.", reps: "3 hiệp × 20 giây", time: 2, muscleGroup: "Core", kneeRisk: false },
-  hollowHold: { name: "⭐ Hollow Hold", guide: "Nằm ngửa, nâng vai và hai chân, chỉ lưng dưới chạm sàn, giữ tư thế.", caution: "Nếu đau lưng, co gối hoặc hạ thấp vai.", reps: "3 hiệp × 15–20 giây", time: 1.5, muscleGroup: "Core", kneeRisk: false },
-  crunch: { name: "💪 Crunch cơ bản", guide: "Nằm ngửa, co gối, tay sau đầu. Nâng vai và đầu gối, siết bụng, hạ chậm.", caution: "Không kéo cổ, cằm cách ngực 1 nắm tay.", reps: "3 hiệp × 15 lần", time: 2, muscleGroup: "Core", kneeRisk: false },
-  reverseCrunch: { name: "⬆️ Reverse Crunch", guide: "Nằm ngửa, nâng hai chân vuông góc. Dùng bụng dưới nâng hông lên, cuộn người về phía ngực.", caution: "Không dùng đà, thực hiện chậm.", reps: "3 hiệp × 12 lần", time: 2, muscleGroup: "Core", kneeRisk: false },
-  sidePlank: { name: "🤸 Side Plank", guide: "Nằm nghiêng, chống khuỷu tay dưới vai, nâng hông lên, giữ. Đổi bên.", caution: "Không để hông chùng.", reps: "3 hiệp × 15s/bên", time: 2, muscleGroup: "Core", kneeRisk: false },
-  vUp: { name: "📐 V-up", guide: "Nằm ngửa, đồng thời nâng chân và thân trên, tay chạm mũi chân (chữ V). Hạ chậm.", caution: "Bài khó, có thể co gối.", reps: "3 hiệp × 8 lần", time: 2.5, muscleGroup: "Core", kneeRisk: false },
-  mountainClimber: { name: "⛰️ Mountain Climber", guide: "Tư thế plank cao. Đưa gối lần lượt lên ngực, nhanh dần.", caution: "Giữ hông thấp, không nâng mông.", reps: "3 hiệp × 20 giây", time: 2, muscleGroup: "Core", kneeRisk: false },
-  toeTap: { name: "👣 Toe Tap", guide: "Nằm ngửa, co gối 90°. Hạ lần lượt từng mũi chân chạm sàn rồi nâng lên.", caution: "Thắt lưng áp sàn, bụng siết.", reps: "3 hiệp × 15 lần/chân", time: 2, muscleGroup: "Core", kneeRisk: false },
-  plankTap: { name: "🪵 Plank chạm vai", guide: "Plank cao, nhấc tay trái chạm vai phải, hạ xuống, đổi bên.", caution: "Không lắc hông.", reps: "3 hiệp × 10 lần/bên", time: 2, muscleGroup: "Core", kneeRisk: false },
-  birdDog: { name: "🦅 Bird Dog", guide: "Quỳ 4 điểm. Nâng tay phải về trước đồng thời đá chân trái ra sau. Đổi bên.", caution: "Đường thẳng từ tay đến chân, không ngửa cổ.", reps: "3 hiệp × 10 lần/bên", time: 2.5, muscleGroup: "Core", kneeRisk: false },
-  obliqueCrunch: { name: "🔄 Gập bụng chéo", guide: "Nằm ngửa co gối, đặt cẳng chân trái lên đầu gối phải. Tay phải sau đầu, gập vai phải về phía đầu gối trái.", caution: "Dùng cơ bụng xéo, không kéo cổ.", reps: "3 hiệp × 12 lần/bên", time: 2.5, muscleGroup: "Core", kneeRisk: false },
-  sidePlankDips: { name: "🤸 Side Plank nhấp hông", guide: "Tư thế Side Plank. Hạ hông gần chạm sàn rồi đẩy lên cao hơn.", caution: "Thực hiện chậm, kiểm soát cơ sườn.", reps: "3 hiệp × 10 lần/bên", time: 2.5, muscleGroup: "Core", kneeRisk: false },
-  pushupKnee: { name: "💪 Hít đất từ gối", guide: "Chống hai tay rộng bằng vai, gối chạm sàn, lưng thẳng. Hạ ngực xuống gần sàn, đẩy lên.", caution: "Khuỷu tay xuôi theo thân.", reps: "3 hiệp × 8–10 lần", time: 2, muscleGroup: "Ngực-Vai-Tay", kneeRisk: false },
-  pushupFull: { name: "💪 Hít đất chuẩn", guide: "Plank thẳng chân, hạ ngực chạm sàn, đẩy lên, giữ lưng thẳng.", caution: "Nếu chưa đủ sức, tập từ gối.", reps: "3 hiệp × 5–8 lần", time: 2.5, muscleGroup: "Ngực-Vai-Tay", kneeRisk: false },
-  overheadPress: { name: "🏋️ Overhead Press", guide: "Đứng, cầm tạ ngang vai, đẩy lên cao, hạ về vai.", caution: "Không ưỡn lưng, siết bụng.", reps: "3 hiệp × 8–10 lần", time: 2.5, muscleGroup: "Ngực-Vai-Tay", kneeRisk: false },
-  lateralRaise: { name: "✈️ Lateral Raise", guide: "Cầm tạ nhẹ, giơ tay sang ngang đến ngang vai, hạ chậm.", caution: "Không dùng đà.", reps: "3 hiệp × 12 lần", time: 2, muscleGroup: "Ngực-Vai-Tay", kneeRisk: false },
-  bicepCurl: { name: "💪 Bicep Curl", guide: "Đứng, cầm tạ, cuốn tạ lên vai (lòng bàn tay hướng lên), khuỷu cố định.", caution: "Không đung đưa thân.", reps: "3 hiệp × 10 lần", time: 2, muscleGroup: "Ngực-Vai-Tay", kneeRisk: false },
-  tricepsDip: { name: "💪 Triceps Dip", guide: "Tay tựa ghế phía sau, chân duỗi. Hạ xuống đến khuỷu 90°, đẩy lên.", caution: "Vai không nhún, không hạ quá sâu.", reps: "3 hiệp × 10 lần", time: 2.5, muscleGroup: "Ngực-Vai-Tay", kneeRisk: false },
-  diamondPushup: { name: "💎 Diamond Pushup", guide: "Chống hai tay chụm hình kim cương dưới ngực, hít đất.", caution: "Bài khó, tập từ gối nếu cần.", reps: "3 hiệp × 5–8 lần", time: 2, muscleGroup: "Ngực-Vai-Tay", kneeRisk: false },
-  pikePushup: { name: "🔺 Pike Pushup", guide: "Tư thế chữ V ngược (mông cao), hạ đầu gần sàn, đẩy lên.", caution: "Không gập khuỷu quá sâu.", reps: "3 hiệp × 8 lần", time: 2.5, muscleGroup: "Ngực-Vai-Tay", kneeRisk: false },
-  floorPress: { name: "🏋️ Floor Press", guide: "Nằm ngửa co gối, cầm tạ. Hạ đến khuỷu chạm sàn, đẩy lên.", caution: "Không bật tạ, kiểm soát.", reps: "3 hiệp × 10 lần", time: 2.5, muscleGroup: "Ngực-Vai-Tay", kneeRisk: false },
-  arnoldPress: { name: "💪 Arnold Press", guide: "Cầm tạ ngang vai (lòng bàn tay vào mặt), đẩy lên xoay cổ tay ra ngoài chậm rãi.", caution: "Xoay chậm, không giật.", reps: "3 hiệp × 8 lần", time: 2.5, muscleGroup: "Ngực-Vai-Tay", kneeRisk: false },
-  hammerCurl: { name: "🔨 Hammer Curl", guide: "Cầm tạ lòng bàn tay hướng vào nhau, cuốn lên vai giữ nguyên hướng.", caution: "Khuỷu sát sườn, không đung đưa.", reps: "3 hiệp × 12 lần", time: 2, muscleGroup: "Ngực-Vai-Tay", kneeRisk: false },
-  tricepsExtension: { name: "💪 Duỗi tay sau qua đầu", guide: "Hai tay cầm tạ đưa qua đầu, gập khuỷu hạ ra sau gáy, duỗi lên.", caution: "Khuỷu khép gần tai.", reps: "3 hiệp × 10 lần", time: 2, muscleGroup: "Ngực-Vai-Tay", kneeRisk: false },
-  inclinePushup: { name: "🪜 Hít đất dốc lên", guide: "Tay trên bục cao, chân lùi ra, hạ ngực chạm cạnh bục rồi đẩy lên.", caution: "Lưng thẳng xuyên suốt.", reps: "3 hiệp × 10–12 lần", time: 2, muscleGroup: "Ngực-Vai-Tay", kneeRisk: false },
-  rowTay: { name: "⛵ Hàng tạ 1 tay", guide: "Tựa tay và đầu gối lên ghế, lưng thẳng. Kéo tạ về hông, khuỷu ép sát người.", caution: "Không xoay thân, không dùng đà.", reps: "3 hiệp × 10 lần/tay", time: 3, muscleGroup: "Lưng trên", kneeRisk: false },
-  superman: { name: "🦸 Superman", guide: "Nằm sấp, nâng tay, chân và ngực lên cùng lúc, giữ 2 giây, hạ.", caution: "Nhìn xuống sàn, không ngửa cổ quá.", reps: "3 hiệp × 10 lần", time: 2, muscleGroup: "Lưng trên", kneeRisk: false },
-  bentOverRow: { name: "🔱 Bent-over Row", guide: "Cúi người lưng thẳng, hai tay cầm tạ, kéo về bụng dưới.", caution: "Không gù lưng.", reps: "3 hiệp × 10 lần", time: 2.5, muscleGroup: "Lưng trên", kneeRisk: false },
-  reverseFly: { name: "🦅 Reverse Fly", guide: "Cúi người, cầm tạ nhẹ, giơ tay sang ngang đến ngang vai, siết lưng trên.", caution: "Khuỷu hơi cong.", reps: "3 hiệp × 12 lần", time: 2, muscleGroup: "Lưng trên", kneeRisk: false },
-  towelRow: { name: "🧣 Towel Row", guide: "Ngồi, chân duỗi, vắt khăn qua bàn chân, kéo về phía ngực.", caution: "Lưng thẳng.", reps: "3 hiệp × 12 lần", time: 2, muscleGroup: "Lưng trên", kneeRisk: false },
-  superman2: { name: "🦸 Superman biến thể", guide: "Nằm sấp, nâng tay phải và chân trái lên, hạ xuống đổi bên.", caution: "Nhìn xuống sàn.", reps: "3 hiệp × 8 lần/bên", time: 2, muscleGroup: "Lưng trên", kneeRisk: false },
-  wRaise: { name: "👐 Nằm sấp giơ chữ W", guide: "Nằm sấp, tay co chữ W. Nâng ngực và tay, ép xương bả vai ra sau 2 giây.", caution: "Nhìn xuống sàn.", reps: "3 hiệp × 12 lần", time: 2, muscleGroup: "Lưng trên", kneeRisk: false },
-  goodMorning: { name: "☀️ Good Morning", guide: "Đứng thẳng, tay sau đầu. Gập người từ hông về phía trước đến thân gần song song sàn, đẩy lên.", caution: "Gối chỉ trùng nhẹ.", reps: "3 hiệp × 12 lần", time: 2.5, muscleGroup: "Lưng trên", kneeRisk: false },
-  doorwayRow: { name: "🚪 Kéo lưng ở mép cửa", guide: "Bám khung cửa, ngả người ra sau hết cỡ rồi kéo sát vào.", caution: "Chọn khung cửa chắc chắn.", reps: "3 hiệp × 12 lần", time: 2, muscleGroup: "Lưng trên", kneeRisk: false },
-  renegadeRow: { name: "🚣 Hít đất kéo tạ", guide: "Plank cao với tạ đơn. Giữ vững người, kéo một tay mang tạ lên hông, đổi bên.", caution: "Mở rộng chân để giữ thăng bằng.", reps: "3 hiệp × 8 lần/tay", time: 3, muscleGroup: "Lưng trên", kneeRisk: false },
-  backExtensionFloor: { name: "🧜 Nâng thân trên nằm sấp", guide: "Nằm sấp, tay sau gáy, chân cố định. Nâng ngực lên bằng cơ lưng, hạ xuống.", caution: "Không giật người lên quá cao.", reps: "3 hiệp × 12 lần", time: 2, muscleGroup: "Lưng trên", kneeRisk: false },
-  highKnees: { name: "🏃 Chạy bước cao tại chỗ", guide: "Nâng gối lên ngang hông, chạy nhẹ tại chỗ.", caution: "Tiếp đất bằng nửa bàn chân trước.", reps: "4 hiệp × 20 giây", time: 2, muscleGroup: "Toàn thân", kneeRisk: false },
-  shadowBox: { name: "🥊 Shadow Boxing", guide: "Thế thủ boxing, đấm thẳng và đấm vòng liên tục vào không trung.", caution: "Không khóa thẳng khuỷu khi ra đòn.", reps: "3 hiệp × 45 giây", time: 3, muscleGroup: "Toàn thân", kneeRisk: false },
-  marchInPlace: { name: "🚶 Đi bộ cao đùi tại chỗ", guide: "Nhấc luân phiên từng đùi vuông góc thân người, đánh tay nhịp nhàng.", caution: "Hạ chân nhẹ nhàng.", reps: "3 hiệp × 45 giây", time: 2.5, muscleGroup: "Toàn thân", kneeRisk: false },
-  bearCrawlWalk: { name: "🐻 Bò kiểu gấu", guide: "Gối cách sàn 5cm. Bò tiến bằng cách di chuyển đồng thời tay này chân kia.", caution: "Lưng phẳng, không vểnh mông.", reps: "3 hiệp × 30 giây", time: 2.5, muscleGroup: "Toàn thân", kneeRisk: false },
-  woodChopBody: { name: "🪓 Chặt củi tay không", guide: "Đứng rộng chân. Vung tay chụm lại từ vai phải xuống đùi trái, xoay nhẹ hông.", caution: "Dùng lực cơ bụng xoay.", reps: "3 hiệp × 12 lần/bên", time: 2.5, muscleGroup: "Toàn thân", kneeRisk: false },
+  "warmup": {
+    "name": "🔥 Khởi động toàn thân",
+    "guide": "1. Xoay cổ nhẹ nhàng 5 vòng mỗi bên. 2. Xoay vai 10 lần tới, 10 lần lui. 3. Xoay cổ tay, cổ chân 10 vòng. 4. Gập người về trước, tay chạm mắt cá chân (gối hơi cong). 5. Xoay hông 10 vòng. 6. Chạy bước nhẹ tại chỗ 30 giây.",
+    "caution": "Không bật nảy, không xoay quá nhanh.",
+    "reps": "5 phút",
+    "time": 5,
+    "kneeRisk": false,
+    "zone_key": "all_body",
+    "distribution": { "all_body": 1.0 }
+  },
+  "cooldown": {
+    "name": "🧘 Thả lỏng & căng cơ",
+    "guide": "1. Ngồi duỗi chân, cúi người về trước kéo căng đùi sau (30s). 2. Nằm ngửa, ôm gối vào ngực mỗi bên 20s. 3. Căng cơ mông. 4. Hít thở sâu 5 nhịp.",
+    "caution": "Không kéo căng đến mức đau.",
+    "reps": "3 phút",
+    "time": 3,
+    "kneeRisk": false,
+    "zone_key": "all_body",
+    "distribution": { "all_body": 1.0 }
+  },
+  "clam": {
+    "name": "🐚 Clam Shell (vỏ sò)",
+    "guide": "Nằm nghiêng, gối gập 90°, hai chân chồng lên nhau. Giữ hai bàn chân chạm nhau, từ từ mở gối trên lên cao nhất có thể, giữ 2 giây, hạ chậm.",
+    "caution": "Không xoay hông. Nếu đau hông, giảm biên độ.",
+    "reps": "3 hiệp × 12 lần/bên",
+    "time": 2.5,
+    "kneeRisk": false,
+    "zone_key": "lower_body",
+    "distribution": { "glutes": 1.0 }
+  },
+  "gluteBridge": {
+    "name": "🌉 Cầu mông 1 chân",
+    "guide": "Nằm ngửa, co gối, bàn chân sát mông. Siết mông nâng hông lên cao, chân kia duỗi thẳng, giữ 2 giây, hạ chậm.",
+    "caution": "Không ưỡn lưng quá mức. Nếu gối yếu, tập cầu mông 2 chân trước.",
+    "reps": "3 hiệp × 10 lần/chân",
+    "time": 2.5,
+    "kneeRisk": false,
+    "zone_key": "lower_body",
+    "distribution": { "glutes": 0.70, "hamstrings": 0.20, "lower_back": 0.10 }
+  },
+  "wallSquat": {
+    "name": "🧱 Squat tường",
+    "guide": "Tựa lưng vào tường, chân đưa ra trước 30–40cm. Trượt xuống đến khi đùi song song mặt đất, giữ 2 giây, đẩy lên.",
+    "caution": "Gối không vượt quá mũi chân. Nếu đau, chỉ hạ 45°.",
+    "reps": "3 hiệp × 12 lần",
+    "time": 2.5,
+    "kneeRisk": true,
+    "zone_key": "lower_body",
+    "distribution": { "quadriceps": 0.70, "glutes": 0.30 }
+  },
+  "deadliftTay": {
+    "name": "🏋️ Deadlift tạ đơn",
+    "guide": "Đứng rộng bằng hông, cầm tạ. Giữ lưng thẳng, hông gập về sau, hạ tạ dọc cẳng chân đến dưới đầu gối. Đẩy hông lên.",
+    "caution": "Lưng thẳng xuyên suốt. Không gù lưng, không khóa gối.",
+    "reps": "3 hiệp × 10 lần",
+    "time": 3,
+    "kneeRisk": false,
+    "zone_key": "lower_body",
+    "distribution": { "hamstrings": 0.45, "glutes": 0.35, "lower_back": 0.20 }
+  },
+  "bulgarianSquat": {
+    "name": "🦵 Bulgarian Split Squat",
+    "guide": "Đặt một chân lên ghế cao ngang gối. Hạ thấp người cho gối sau gần chạm sàn, đẩy lên.",
+    "caution": "Gối trước không vượt mũi chân.",
+    "reps": "3 hiệp × 8 lần/chân",
+    "time": 3,
+    "kneeRisk": true,
+    "zone_key": "lower_body",
+    "distribution": { "quadriceps": 0.50, "glutes": 0.40, "hamstrings": 0.10 }
+  },
+  "lunges": {
+    "name": "🚶 Lunge tại chỗ",
+    "guide": "Bước một chân dài về trước, hạ gối sau gần sàn (gối trước vuông góc). Đẩy về tư thế đứng, đổi bên.",
+    "caution": "Gối trước không vượt mũi chân.",
+    "reps": "3 hiệp × 10 lần/chân",
+    "time": 2.5,
+    "kneeRisk": true,
+    "zone_key": "lower_body",
+    "distribution": { "quadriceps": 0.50, "glutes": 0.35, "hamstrings": 0.15 }
+  },
+  "stepUp": {
+    "name": "📦 Step-up",
+    "guide": "Bước một chân lên bục cao 20–30cm, đưa chân kia theo, bước xuống, đổi chân.",
+    "caution": "Không dùng đà, kiểm soát toàn bộ.",
+    "reps": "3 hiệp × 10 lần/chân",
+    "time": 2.5,
+    "kneeRisk": true,
+    "zone_key": "lower_body",
+    "distribution": { "quadriceps": 0.60, "glutes": 0.30, "calves": 0.10 }
+  },
+  "donkeyKick": {
+    "name": "🦵 Donkey Kick",
+    "guide": "Quỳ 4 điểm. Đá một chân lên trần, giữ gối gập 90°. Siết mông ở đỉnh.",
+    "caution": "Không võng lưng, không xoay hông.",
+    "reps": "3 hiệp × 15 lần/chân",
+    "time": 2,
+    "kneeRisk": false,
+    "zone_key": "lower_body",
+    "distribution": { "glutes": 0.85, "hamstrings": 0.15 }
+  },
+  "sideLegRaise": {
+    "name": "🦵 Nâng chân nghiêng",
+    "guide": "Nằm nghiêng, chân dưới co nhẹ. Nâng chân trên lên cao, giữ 1 giây, hạ chậm.",
+    "caution": "Không xoay hông về trước.",
+    "reps": "3 hiệp × 12 lần/bên",
+    "time": 2,
+    "kneeRisk": false,
+    "zone_key": "lower_body",
+    "distribution": { "glutes": 1.0 }
+  },
+  "squatJump": {
+    "name": "🏀 Squat bật nhảy",
+    "guide": "Squat bình thường, khi đứng lên bật nhẹ. Tiếp đất bằng nửa bàn chân trước, hạ gối mềm.",
+    "caution": "Chỉ tập khi gối 4–5.",
+    "reps": "3 hiệp × 8 lần",
+    "time": 2,
+    "kneeRisk": true,
+    "zone_key": "lower_body",
+    "distribution": { "quadriceps": 0.50, "glutes": 0.30, "calves": 0.20 }
+  },
+  "calfRaise": {
+    "name": "🦵 Kiễng gót",
+    "guide": "Kiễng gót lên cao nhất, giữ 1 giây, hạ từ từ.",
+    "caution": "Giữ thăng bằng, không dùng đà.",
+    "reps": "3 hiệp × 15 lần",
+    "time": 1.5,
+    "kneeRisk": false,
+    "zone_key": "lower_body",
+    "distribution": { "calves": 1.0 }
+  },
+  "fireHydrant": {
+    "name": "🚒 Fire Hydrant",
+    "guide": "Quỳ 4 điểm, đưa một chân sang ngang, giữ gối gập 90°. Siết mông ngoài.",
+    "caution": "Lưng thẳng, không nghiêng người.",
+    "reps": "3 hiệp × 12 lần/bên",
+    "time": 2,
+    "kneeRisk": false,
+    "zone_key": "lower_body",
+    "distribution": { "glutes": 1.0 }
+  },
+  "frogPump": {
+    "name": "🐸 Frog Pump",
+    "guide": "Nằm ngửa, áp hai lòng bàn chân vào nhau. Siết mông nâng hông lên rồi hạ chạm nhẹ.",
+    "caution": "Tập trung lực vào mông, không dùng lưng dưới.",
+    "reps": "3 hiệp × 15 lần",
+    "time": 2,
+    "kneeRisk": false,
+    "zone_key": "lower_body",
+    "distribution": { "glutes": 0.90, "hamstrings": 0.10 }
+  },
+  "kneelingSquat": {
+    "name": "🧎 Squat quỳ",
+    "guide": "Quỳ hai gối, hạ mông xuống gót chân, đẩy thẳng dậy, siết mạnh mông.",
+    "caution": "Lót thảm dày.",
+    "reps": "3 hiệp × 15 lần",
+    "time": 2,
+    "kneeRisk": false,
+    "zone_key": "lower_body",
+    "distribution": { "glutes": 0.80, "hamstrings": 0.20 }
+  },
+  "gluteBridgeHold": {
+    "name": "🌉 Cầu mông giữ tĩnh",
+    "guide": "Nằm ngửa, co gối, nâng hông. Siết mông, giữ tư thế, hít thở đều.",
+    "caution": "Không ưỡn lưng dưới quá mức.",
+    "reps": "3 hiệp × 30 giây",
+    "time": 2,
+    "kneeRisk": false,
+    "zone_key": "lower_body",
+    "distribution": { "glutes": 0.70, "hamstrings": 0.20, "lower_back": 0.10 }
+  },
+  "rainbowKicks": {
+    "name": "🌈 Rainbow Kicks",
+    "guide": "Quỳ 4 điểm, duỗi thẳng một chân ra sau. Vẽ đường vòng cung sang trái rồi sang phải.",
+    "caution": "Không lắc lư người.",
+    "reps": "3 hiệp × 12 lần/bên",
+    "time": 2.5,
+    "kneeRisk": false,
+    "zone_key": "lower_body",
+    "distribution": { "glutes": 0.90, "hamstrings": 0.10 }
+  },
+  "singleLegDeadliftBody": {
+    "name": "🧍 Deadlift 1 chân tay không",
+    "guide": "Trụ bằng một chân, gập người từ hông về trước, đá chân kia ra sau song song sàn.",
+    "caution": "Lưng thẳng, gối chân trụ hơi trùng.",
+    "reps": "3 hiệp × 8 lần/chân",
+    "time": 2.5,
+    "kneeRisk": false,
+    "zone_key": "lower_body",
+    "distribution": { "hamstrings": 0.50, "glutes": 0.30, "lower_back": 0.20 }
+  },
+  "lateralLegWalk": {
+    "name": "🦀 Đi bộ ngang",
+    "guide": "Hơi trùng gối nhẹ, bước sang trái 10 bước rồi ngược lại.",
+    "caution": "Giữ khoảng cách hai chân rộng bằng hông.",
+    "reps": "3 hiệp × 20 bước",
+    "time": 2,
+    "kneeRisk": false,
+    "zone_key": "lower_body",
+    "distribution": { "glutes": 0.70, "quadriceps": 0.30 }
+  },
+  "singleLegCalfRaise": {
+    "name": "🦿 Kiễng gót 1 chân",
+    "guide": "Co một chân, kiễng gót cao nhất có thể, hạ chậm.",
+    "caution": "Có thể bám nhẹ tường.",
+    "reps": "3 hiệp × 12 lần/chân",
+    "time": 2,
+    "kneeRisk": false,
+    "zone_key": "lower_body",
+    "distribution": { "calves": 1.0 }
+  },
+  "plankKnee": {
+    "name": "🧘 Plank từ gối",
+    "guide": "Chống hai cẳng tay, gối chạm sàn, siết bụng, giữ lưng thẳng.",
+    "caution": "Không võng lưng.",
+    "reps": "3 hiệp × 20–30 giây",
+    "time": 2,
+    "kneeRisk": false,
+    "zone_key": "core",
+    "distribution": { "abs": 0.70, "lower_back": 0.30 }
+  },
+  "deadbug": {
+    "name": "🪲 Dead Bug",
+    "guide": "Nằm ngửa, co gối 90°, tay giơ thẳng lên. Duỗi chân trái và hạ tay phải xuống (không chạm sàn), đổi bên.",
+    "caution": "Thắt lưng áp sát sàn xuyên suốt.",
+    "reps": "3 hiệp × 8 lần/bên",
+    "time": 2.5,
+    "kneeRisk": false,
+    "zone_key": "core",
+    "distribution": { "abs": 0.80, "obliques": 0.20 }
+  },
+  "legRaise": {
+    "name": "🦵 Nâng chân đơn",
+    "guide": "Nằm ngửa, nâng một chân lên 45°, giữ 2 giây, hạ chậm.",
+    "caution": "Không để lưng cong khỏi sàn.",
+    "reps": "3 hiệp × 10 lần/chân",
+    "time": 2,
+    "kneeRisk": false,
+    "zone_key": "core",
+    "distribution": { "abs": 1.0 }
+  },
+  "russianTwist": {
+    "name": "🔄 Russian Twist",
+    "guide": "Ngồi ngả lưng, xoay thân sang trái rồi sang phải. Có thể cầm tạ nhẹ.",
+    "caution": "Không xoay quá nhanh.",
+    "reps": "3 hiệp × 12 lần/bên",
+    "time": 2.5,
+    "kneeRisk": false,
+    "zone_key": "core",
+    "distribution": { "obliques": 0.70, "abs": 0.30 }
+  },
+  "bicycleCrunch": {
+    "name": "🚴 Bicycle Crunch",
+    "guide": "Nằm ngửa, tay sau đầu, đưa gối trái về phía khuỷu phải đồng thời duỗi chân phải, đổi bên.",
+    "caution": "Không kéo cổ, dùng bụng nâng vai.",
+    "reps": "3 hiệp × 15 lần/bên",
+    "time": 2.5,
+    "kneeRisk": false,
+    "zone_key": "core",
+    "distribution": { "obliques": 0.50, "abs": 0.50 }
+  },
+  "flutterKicks": {
+    "name": "🏊 Flutter Kicks",
+    "guide": "Nằm ngửa, tay dưới mông, nâng hai chân 15cm, đạp lên xuống nhịp nhàng.",
+    "caution": "Lưng áp sàn, không nín thở.",
+    "reps": "3 hiệp × 20 giây",
+    "time": 2,
+    "kneeRisk": false,
+    "zone_key": "core",
+    "distribution": { "abs": 1.0 }
+  },
+  "hollowHold": {
+    "name": "⭐ Hollow Hold",
+    "guide": "Nằm ngửa, nâng vai and hai chân, chỉ lưng dưới chạm sàn, giữ tư thế.",
+    "caution": "Nếu đau lưng, co gối hoặc hạ thấp vai.",
+    "reps": "3 hiệp × 15–20 giây",
+    "time": 1.5,
+    "kneeRisk": false,
+    "zone_key": "core",
+    "distribution": { "abs": 0.90, "obliques": 0.10 }
+  },
+  "crunch": {
+    "name": "💪 Crunch cơ bản",
+    "guide": "Nằm ngửa, co gối, tay sau đầu. Nâng vai và đầu gối, siết bụng, hạ chậm.",
+    "caution": "Không kéo cổ, cằm cách ngực 1 nắm tay.",
+    "reps": "3 hiệp × 15 lần",
+    "time": 2,
+    "kneeRisk": false,
+    "zone_key": "core",
+    "distribution": { "abs": 1.0 }
+  },
+  "reverseCrunch": {
+    "name": "⬆️ Reverse Crunch",
+    "guide": "Nằm ngửa, nâng hai chân vuông góc. Dùng bụng dưới nâng hông lên, cuộn người về phía ngực.",
+    "caution": "Không dùng đà, thực hiện chậm.",
+    "reps": "3 hiệp × 12 lần",
+    "time": 2,
+    "kneeRisk": false,
+    "zone_key": "core",
+    "distribution": { "abs": 1.0 }
+  },
+  "sidePlank": {
+    "name": "🤸 Side Plank",
+    "guide": "Nằm nghiêng, chống khuỷu tay dưới vai, nâng hông lên, giữ. Đổi bên.",
+    "caution": "Không để hông chùng.",
+    "reps": "3 hiệp × 15s/bên",
+    "time": 2,
+    "kneeRisk": false,
+    "zone_key": "core",
+    "distribution": { "obliques": 0.80, "abs": 0.20 }
+  },
+  "vUp": {
+    "name": "📐 V-up",
+    "guide": "Nằm ngửa, đồng thời nâng chân và thân trên, tay chạm mũi chân (chữ V). Hạ chậm.",
+    "caution": "Bài khó, có thể co gối.",
+    "reps": "3 hiệp × 8 lần",
+    "time": 2.5,
+    "kneeRisk": false,
+    "zone_key": "core",
+    "distribution": { "abs": 1.0 }
+  },
+  "mountainClimber": {
+    "name": "⛰️ Mountain Climber",
+    "guide": "Tư thế plank cao. Đưa gối lần lượt lên ngực, nhanh dần.",
+    "caution": "Giữ hông thấp, không nâng mông.",
+    "reps": "3 hiệp × 20 giây",
+    "time": 2,
+    "kneeRisk": false,
+    "zone_key": "core",
+    "distribution": { "abs": 0.70, "obliques": 0.30 }
+  },
+  "toeTap": {
+    "name": "👣 Toe Tap",
+    "guide": "Nằm ngửa, co gối 90°. Hạ lần lượt từng mũi chân chạm sàn rồi nâng lên.",
+    "caution": "Thắt lưng áp sàn, bụng siết.",
+    "reps": "3 hiệp × 15 lần/chân",
+    "time": 2,
+    "kneeRisk": false,
+    "zone_key": "core",
+    "distribution": { "abs": 1.0 }
+  },
+  "plankTap": {
+    "name": "🪵 Plank chạm vai",
+    "guide": "Plank cao, nhấc tay trái chạm vai phải, hạ xuống, đổi bên.",
+    "caution": "Không lắc hông.",
+    "reps": "3 hiệp × 10 lần/bên",
+    "time": 2,
+    "kneeRisk": false,
+    "zone_key": "core",
+    "distribution": { "abs": 0.60, "lower_back": 0.40 }
+  },
+  "birdDog": {
+    "name": "🦅 Bird Dog",
+    "guide": "Quỳ 4 điểm. Nâng tay phải về trước đồng thời đá chân trái ra sau. Đổi bên.",
+    "caution": "Đường thẳng từ tay đến chân, không ngửa cổ.",
+    "reps": "3 hiệp × 10 lần/bên",
+    "time": 2.5,
+    "kneeRisk": false,
+    "zone_key": "core",
+    "distribution": { "lower_back": 0.60, "glutes": 0.40 }
+  },
+  "obliqueCrunch": {
+    "name": "🔄 Gập bụng chéo",
+    "guide": "Nằm ngửa co gối, đặt cẳng chân trái lên đầu gối phải. Tay phải sau đầu, gập vai phải về phía đầu gối trái.",
+    "caution": "Dùng cơ bụng xéo, không kéo cổ.",
+    "reps": "3 hiệp × 12 lần/bên",
+    "time": 2.5,
+    "kneeRisk": false,
+    "zone_key": "core",
+    "distribution": { "obliques": 0.80, "abs": 0.20 }
+  },
+  "sidePlankDips": {
+    "name": "🤸 Side Plank nhấp hông",
+    "guide": "Tư thế Side Plank. Hạ hông gần chạm sàn rồi đẩy lên cao hơn.",
+    "caution": "Thực hiện chậm, kiểm soát cơ sườn.",
+    "reps": "3 hiệp × 10 lần/bên",
+    "time": 2.5,
+    "kneeRisk": false,
+    "zone_key": "core",
+    "distribution": { "obliques": 1.0 }
+  },
+  "pushupKnee": {
+    "name": "💪 Hít đất từ gối",
+    "guide": "Chống hai tay rộng bằng vai, gối chạm sàn, lưng thẳng. Hạ ngực xuống gần sàn, đẩy lên.",
+    "caution": "Khuỷu tay xuôi theo thân.",
+    "reps": "3 hiệp × 8–10 lần",
+    "time": 2,
+    "kneeRisk": false,
+    "zone_key": "upper_body_push",
+    "distribution": { "chest": 0.65, "front_deltoids": 0.20, "triceps": 0.15 }
+  },
+  "pushupFull": {
+    "name": "💪 Hít đất chuẩn",
+    "guide": "Plank thẳng chân, hạ ngực chạm sàn, đẩy lên, giữ lưng thẳng.",
+    "caution": "Nếu chưa đủ sức, tập từ gối.",
+    "reps": "3 hiệp × 5–8 lần",
+    "time": 2.5,
+    "kneeRisk": false,
+    "zone_key": "upper_body_push",
+    "distribution": { "chest": 0.65, "front_deltoids": 0.20, "triceps": 0.15 }
+  },
+  "overheadPress": {
+    "name": "🏋️ Overhead Press",
+    "guide": "Đứng, cầm tạ ngang vai, đẩy lên cao, hạ về vai.",
+    "caution": "Không ưỡn lưng, siết bụng.",
+    "reps": "3 hiệp × 8–10 lần",
+    "time": 2.5,
+    "kneeRisk": false,
+    "zone_key": "upper_body_push",
+    "distribution": { "front_deltoids": 0.70, "side_deltoids": 0.15, "triceps": 0.15 }
+  },
+  "lateralRaise": {
+    "name": "✈️ Lateral Raise",
+    "guide": "Cầm tạ nhẹ, giơ tay sang ngang đến ngang vai, hạ chậm.",
+    "caution": "Không dùng đà.",
+    "reps": "3 hiệp × 12 lần",
+    "time": 2,
+    "kneeRisk": false,
+    "zone_key": "upper_body_push",
+    "distribution": { "side_deltoids": 1.0 }
+  },
+  "bicepCurl": {
+    "name": "💪 Bicep Curl",
+    "guide": "Đứng, cầm tạ, cuốn tạ lên vai (lòng bàn tay hướng lên), khuỷu cố định.",
+    "caution": "Không đung đưa thân.",
+    "reps": "3 hiệp × 10 lần",
+    "time": 2,
+    "kneeRisk": false,
+    "zone_key": "upper_body_pull",
+    "distribution": { "biceps": 1.0 }
+  },
+  "tricepsDip": {
+    "name": "💪 Triceps Dip",
+    "guide": "Tay tựa ghế phía sau, chân duỗi. Hạ xuống đến khuỷu 90°, đẩy lên.",
+    "caution": "Vai không nhún, không hạ quá sâu.",
+    "reps": "3 hiệp × 10 lần",
+    "time": 2.5,
+    "kneeRisk": false,
+    "zone_key": "upper_body_push",
+    "distribution": { "triceps": 0.75, "chest": 0.15, "front_deltoids": 0.10 }
+  },
+  "diamondPushup": {
+    "name": "💎 Diamond Pushup",
+    "guide": "Chống hai tay chụm hình kim cương dưới ngực, hít đất.",
+    "caution": "Bài khó, tập từ gối nếu cần.",
+    "reps": "3 hiệp × 5–8 lần",
+    "time": 2,
+    "kneeRisk": false,
+    "zone_key": "upper_body_push",
+    "distribution": { "triceps": 0.50, "chest": 0.35, "front_deltoids": 0.15 }
+  },
+  "pikePushup": {
+    "name": "🔺 Pike Pushup",
+    "guide": "Tư thế chữ V ngược (mông cao), hạ đầu gần sàn, đẩy lên.",
+    "caution": "Không gập khuỷu quá sâu.",
+    "reps": "3 hiệp × 8 lần",
+    "time": 2.5,
+    "kneeRisk": false,
+    "zone_key": "upper_body_push",
+    "distribution": { "front_deltoids": 0.60, "triceps": 0.25, "side_deltoids": 0.15 }
+  },
+  "floorPress": {
+    "name": "🏋️ Floor Press",
+    "guide": "Nằm ngửa co gối, cầm tạ. Hạ đến khuỷu chạm sàn, đẩy lên.",
+    "caution": "Không bật tạ, kiểm soát.",
+    "reps": "3 hiệp × 10 lần",
+    "time": 2.5,
+    "kneeRisk": false,
+    "zone_key": "upper_body_push",
+    "distribution": { "chest": 0.70, "triceps": 0.20, "front_deltoids": 0.10 }
+  },
+  "arnoldPress": {
+    "name": "💪 Arnold Press",
+    "guide": "Cầm tạ ngang vai (lòng bàn tay vào mặt), đẩy lên xoay cổ tay ra ngoài chậm rãi.",
+    "caution": "Xoay chậm, không giật.",
+    "reps": "3 hiệp × 8 lần",
+    "time": 2.5,
+    "kneeRisk": false,
+    "zone_key": "upper_body_push",
+    "distribution": { "front_deltoids": 0.50, "side_deltoids": 0.30, "triceps": 0.20 }
+  },
+  "hammerCurl": {
+    "name": "🔨 Hammer Curl",
+    "guide": "Cầm tạ lòng bàn tay hướng vào nhau, cuốn lên vai giữ nguyên hướng.",
+    "caution": "Khuỷu sát sườn, không đung đưa.",
+    "reps": "3 hiệp × 12 lần",
+    "time": 2,
+    "kneeRisk": false,
+    "zone_key": "upper_body_pull",
+    "distribution": { "biceps": 0.70, "forearms": 0.30 }
+  },
+  "tricepsExtension": {
+    "name": "💪 Duỗi tay sau qua đầu",
+    "guide": "Hai tay cầm tạ đưa qua đầu, gập khuỷu hạ ra sau gáy, duỗi lên.",
+    "caution": "Khuỷu khép gần tai.",
+    "reps": "3 hiệp × 10 lần",
+    "time": 2,
+    "kneeRisk": false,
+    "zone_key": "upper_body_push",
+    "distribution": { "triceps": 1.0 }
+  },
+  "inclinePushup": {
+    "name": "🪜 Hít đất dốc lên",
+    "guide": "Tay trên bục cao, chân lùi ra, hạ ngực chạm cạnh bục rồi đẩy lên.",
+    "caution": "Lưng thẳng xuyên suốt.",
+    "reps": "3 hiệp × 10–12 lần",
+    "time": 2,
+    "kneeRisk": false,
+    "zone_key": "upper_body_push",
+    "distribution": { "chest": 0.70, "triceps": 0.15, "front_deltoids": 0.15 }
+  },
+  "rowTay": {
+    "name": "⛵ Hàng tạ 1 tay",
+    "guide": "Tựa tay và đầu gối lên ghế, lưng thẳng. Kéo tạ về hông, khuỷu ép sát người.",
+    "caution": "Không xoay thân, không dùng đà.",
+    "reps": "3 hiệp × 10 lần/tay",
+    "time": 3,
+    "kneeRisk": false,
+    "zone_key": "upper_body_pull",
+    "distribution": { "lats_upper_back": 0.70, "biceps": 0.20, "rear_deltoids": 0.10 }
+  },
+  "superman": {
+    "name": "🦸 Superman",
+    "guide": "Nằm sấp, nâng tay, chân và ngực lên cùng lúc, giữ 2 giây, hạ.",
+    "caution": "Nhìn xuống sàn, không ngửa cổ quá.",
+    "reps": "3 hiệp × 10 lần",
+    "time": 2,
+    "kneeRisk": false,
+    "zone_key": "upper_body_pull",
+    "distribution": { "lower_back": 0.50, "glutes": 0.30, "lats_upper_back": 0.20 }
+  },
+  "bentOverRow": {
+    "name": "🔱 Bent-over Row",
+    "guide": "Cúi người lưng thẳng, hai tay cầm tạ, kéo về bụng dưới.",
+    "caution": "Không gù lưng.",
+    "reps": "3 hiệp × 10 lần",
+    "time": 2.5,
+    "kneeRisk": false,
+    "zone_key": "upper_body_pull",
+    "distribution": { "lats_upper_back": 0.65, "biceps": 0.20, "lower_back": 0.15 }
+  },
+  "reverseFly": {
+    "name": "🦅 Reverse Fly",
+    "guide": "Cúi người, cầm tạ nhẹ, giơ tay sang ngang đến ngang vai, siết lưng trên.",
+    "caution": "Khuỷu hơi cong.",
+    "reps": "3 hiệp × 12 lần",
+    "time": 2,
+    "kneeRisk": false,
+    "zone_key": "upper_body_pull",
+    "distribution": { "rear_deltoids": 0.60, "lats_upper_back": 0.40 }
+  },
+  "towelRow": {
+    "name": "🧣 Towel Row",
+    "guide": "Ngồi, chân duỗi, vắt khăn qua bàn chân, kéo về phía ngực.",
+    "caution": "Lưng thẳng.",
+    "reps": "3 hiệp × 12 lần",
+    "time": 2,
+    "kneeRisk": false,
+    "zone_key": "upper_body_pull",
+    "distribution": { "lats_upper_back": 0.70, "biceps": 0.20, "forearms": 0.10 }
+  },
+  "superman2": {
+    "name": "🦸 Superman biến thể",
+    "guide": "Nằm sấp, nâng tay phải và chân trái lên, hạ xuống đổi bên.",
+    "caution": "Nhìn xuống sàn.",
+    "reps": "3 hiệp × 8 lần/bên",
+    "time": 2,
+    "kneeRisk": false,
+    "zone_key": "upper_body_pull",
+    "distribution": { "lower_back": 0.50, "glutes": 0.30, "lats_upper_back": 0.20 }
+  },
+  "wRaise": {
+    "name": "👐 Nằm sấp giơ chữ W",
+    "guide": "Nằm sấp, tay co chữ W. Nâng ngực và tay, ép xương bả vai ra sau 2 giây.",
+    "caution": "Nhìn xuống sàn.",
+    "reps": "3 hiệp × 12 lần",
+    "time": 2,
+    "kneeRisk": false,
+    "zone_key": "upper_body_pull",
+    "distribution": { "lats_upper_back": 0.60, "rear_deltoids": 0.30, "upper_trapezius": 0.10 }
+  },
+  "goodMorning": {
+    "name": "☀️ Good Morning",
+    "guide": "Đứng thẳng, tay sau đầu. Gập người từ hông về phía trước đến thân gần song song sàn, đẩy lên.",
+    "caution": "Gối chỉ trùng nhẹ.",
+    "reps": "3 hiệp × 12 lần",
+    "time": 2.5,
+    "kneeRisk": false,
+    "zone_key": "lower_body",
+    "distribution": { "hamstrings": 0.50, "lower_back": 0.30, "glutes": 0.20 }
+  },
+  "doorwayRow": {
+    "name": "🚪 Kéo lưng ở mép cửa",
+    "guide": "Bám khung cửa, ngả người ra sau hết cỡ rồi kéo sát vào.",
+    "caution": "Chọn khung cửa chắc chắn.",
+    "reps": "3 hiệp × 12 lần",
+    "time": 2,
+    "kneeRisk": false,
+    "zone_key": "upper_body_pull",
+    "distribution": { "lats_upper_back": 0.70, "biceps": 0.20, "forearms": 0.10 }
+  },
+  "renegadeRow": {
+    "name": "🚣 Hít đất kéo tạ",
+    "guide": "Plank cao với tạ đơn. Giữ vững người, kéo một tay mang tạ lên hông, đổi bên.",
+    "caution": "Mở rộng chân để giữ thăng bằng.",
+    "reps": "3 hiệp × 8 lần/tay",
+    "time": 3,
+    "kneeRisk": false,
+    "zone_key": "upper_body_pull",
+    "distribution": { "lats_upper_back": 0.40, "abs": 0.30, "biceps": 0.20, "chest": 0.10 }
+  },
+  "backExtensionFloor": {
+    "name": "🧜 Nâng thân trên nằm sấp",
+    "guide": "Nằm sấp, tay sau gáy, chân cố định. Nâng ngực lên bằng cơ lưng, hạ xuống.",
+    "caution": "Không giật người lên quá cao.",
+    "reps": "3 hiệp × 12 lần",
+    "time": 2,
+    "kneeRisk": false,
+    "zone_key": "core",
+    "distribution": { "lower_back": 0.80, "glutes": 0.20 }
+  },
+  "highKnees": {
+    "name": "🏃 Chạy bước cao tại chỗ",
+    "guide": "Nâng gối lên ngang hông, chạy nhẹ tại chỗ.",
+    "caution": "Tiếp đất bằng nửa bàn chân trước.",
+    "reps": "4 hiệp × 20 giây",
+    "time": 2,
+    "kneeRisk": false,
+    "zone_key": "cardio",
+    "distribution": { "quadriceps": 0.40, "calves": 0.30, "abs": 0.30 }
+  },
+  "shadowBox": {
+    "name": "🥊 Shadow Boxing",
+    "guide": "Thế thủ boxing, đấm thẳng và đấm vòng liên tục vào không trung.",
+    "caution": "Không khóa thẳng khuỷu khi ra đòn.",
+    "reps": "3 hiệp × 45 giây",
+    "time": 3,
+    "kneeRisk": false,
+    "zone_key": "cardio",
+    "distribution": { "side_deltoids": 0.40, "obliques": 0.30, "chest": 0.30 }
+  },
+  "marchInPlace": {
+    "name": "🚶 Đi bộ cao đùi tại chỗ",
+    "guide": "Nhấc luân phiên từng đùi vuông góc thân người, đánh tay nhịp nhàng.",
+    "caution": "Hạ chân nhẹ nhàng.",
+    "reps": "3 hiệp × 45 giây",
+    "time": 2.5,
+    "kneeRisk": false,
+    "zone_key": "cardio",
+    "distribution": { "quadriceps": 0.50, "abs": 0.30, "calves": 0.20 }
+  },
+  "bearCrawlWalk": {
+    "name": "🐻 Bò kiểu gấu",
+    "guide": "Gối cách sàn 5cm. Bò tiến bằng cách di chuyển đồng thời tay này chân kia.",
+    "caution": "Lưng phẳng, không vểnh mông.",
+    "reps": "3 hiệp × 30 giây",
+    "time": 2.5,
+    "kneeRisk": false,
+    "zone_key": "all_body",
+    "distribution": { "abs": 0.40, "quadriceps": 0.30, "front_deltoids": 0.30 }
+  },
+  "woodChopBody": {
+    "name": "🪓 Chặt củi tay không",
+    "guide": "Đứng rộng chân. Vung tay chụm lại từ vai phải xuống đùi trái, xoay nhẹ hông.",
+    "caution": "Dùng lực cơ bụng xoay.",
+    "reps": "3 hiệp × 12 lần/bên",
+    "time": 2.5,
+    "kneeRisk": false,
+    "zone_key": "core",
+    "distribution": { "obliques": 0.60, "abs": 0.20, "front_deltoids": 0.20 }
+  }
+}
+
+const MUSCLE_KEYS = ["chest","lats_upper_back","front_deltoids","side_deltoids","rear_deltoids",
+  "upper_trapezius","biceps","triceps","forearms","quadriceps","hamstrings","glutes",
+  "calves","abs","obliques","lower_back"];
+
+const MUSCLE_NAMES_VI = {
+  chest:"Ngực", lats_upper_back:"Lưng xô & Lưng trên", front_deltoids:"Vai trước",
+  side_deltoids:"Vai giữa", rear_deltoids:"Vai sau", upper_trapezius:"Cầu vai",
+  biceps:"Tay trước", triceps:"Tay sau", forearms:"Cẳng tay", quadriceps:"Đùi trước",
+  hamstrings:"Đùi sau", glutes:"Mông", calves:"Bắp chuối", abs:"Bụng",
+  obliques:"Bụng sườn", lower_back:"Lưng dưới"
 };
 
+// % phân bổ mục tiêu tuần (nam giới), tổng = 1.0
+const MUSCLE_DISTRIBUTION = {
+  chest:0.12, lats_upper_back:0.15, front_deltoids:0.04, side_deltoids:0.08,
+  rear_deltoids:0.06, upper_trapezius:0.03, biceps:0.07, triceps:0.07,
+  forearms:0.03, quadriceps:0.10, hamstrings:0.08, glutes:0.05,
+  calves:0.04, abs:0.04, obliques:0.02, lower_back:0.02
+};
+
+// Phân bổ calo theo nhóm cơ cho từng loại thể thao (tổng mỗi loại = 1.0)
+const SPORT_DISTRIBUTION = {
+  football_5_goal:   { quadriceps:0.25, calves:0.15, glutes:0.15, abs:0.15, hamstrings:0.15, side_deltoids:0.15 },
+  football_5_defender:{ quadriceps:0.25, hamstrings:0.20, glutes:0.15, calves:0.15, abs:0.15, lower_back:0.10 },
+  football_5_mid:    { quadriceps:0.25, hamstrings:0.20, calves:0.15, glutes:0.15, abs:0.15, lower_back:0.10 },
+  badminton:         { quadriceps:0.20, calves:0.15, side_deltoids:0.15, triceps:0.10, obliques:0.15, abs:0.15, forearms:0.10 },
+  running:           { quadriceps:0.35, hamstrings:0.25, calves:0.25, abs:0.15 },
+  swimming:          { chest:0.20, lats_upper_back:0.20, side_deltoids:0.15, triceps:0.10, abs:0.15, quadriceps:0.10, calves:0.10 },
+  gym_free:          { chest:0.20, lats_upper_back:0.20, biceps:0.10, triceps:0.10, quadriceps:0.15, glutes:0.15, abs:0.10 },
+  walking:           { quadriceps:0.35, hamstrings:0.20, calves:0.30, glutes:0.15 }
+};
+
+// Phân bổ calo của một danh sách bài tập (hoặc 1 buổi thể thao) vào 16 nhóm cơ
+function distributeCaloriesToMuscles(exercises, weightFactor) {
+  let map = {};
+  MUSCLE_KEYS.forEach(m => map[m] = 0);
+  exercises.forEach(ex => {
+    let exCalo = (ex.calo_per_minute || 3) * ex.time * weightFactor;
+    let dist = ex.distribution || {};
+    for (let key in dist) {
+      if (key === "all_body") {
+        MUSCLE_KEYS.forEach(m => map[m] += exCalo * dist[key] / MUSCLE_KEYS.length);
+      } else if (map.hasOwnProperty(key)) {
+        map[key] += exCalo * dist[key];
+      }
+    }
+  });
+  return map;
+}
+
+function distributeSportCalories(sportType, totalCalo) {
+  let map = {};
+  MUSCLE_KEYS.forEach(m => map[m] = 0);
+  let dist = SPORT_DISTRIBUTION[sportType] || {};
+  for (let key in dist) {
+    if (map.hasOwnProperty(key)) map[key] += totalCalo * dist[key];
+  }
+  return map;
+}
+
+function percentToColor(pct) {
+  pct = Math.max(0, Math.min(100, pct));
+  const hue = (pct / 100) * 120; // 0 = đỏ, 120 = xanh
+  return `hsl(${hue}, 65%, 45%)`;
+}
+  
 const ALL_MUSCLE_GROUPS = ["Chân-Mông", "Core", "Ngực-Vai-Tay", "Lưng trên", "Toàn thân"];
 
 // ==================== SPORT DATA ====================
@@ -1199,17 +1953,16 @@ document.getElementById("generateWorkoutBtn").addEventListener("click", () => {
 document.getElementById("saveWorkoutSessionBtn").addEventListener("click", () => {
   if (!currentExercises.length) { alert("Hãy tạo bài tập trước"); return; }
   const completion = window.currentCompletion || 0;
+  const weightFactor = appData.currentWeight / 90; // hiệu chỉnh theo cân nặng (chuẩn tham chiếu 90kg)
   const duration = Math.round(currentExercises.reduce((s, e) => s + e.time, 0));
-  const calo = calculateCalories(5.0, appData.currentWeight, duration);
-  let rawGroups = currentExercises.map(e => e.muscleGroup);
-  let expanded = [];
-  rawGroups.forEach(g => {
-    if (g === "Toàn thân") expanded.push("Chân-Mông","Core","Ngực-Vai-Tay","Lưng trên");
-    else expanded.push(g);
-  });
-  const muscleGroups = [...new Set(expanded)];
+  const muscleCalories = distributeCaloriesToMuscles(currentExercises, weightFactor);
+  const calo = Math.round(MUSCLE_KEYS.reduce((sum, m) => sum + muscleCalories[m], 0));
+  // làm tròn từng nhóm sau khi đã tính tổng từ giá trị gốc
+  MUSCLE_KEYS.forEach(m => muscleCalories[m] = Math.round(muscleCalories[m]));
+
+  let rawZones = currentExercises.map(e => e.zone_key);
   const date = document.getElementById("workoutDate").value || new Date().toISOString().slice(0,10);
-  addSession({ type:"guided", activityName:"Bài tập FlexiFit", date, durationMin:duration, totalCalo:calo, completionRatio:completion, muscleGroups });
+  addSession({ type:"guided", activityName:"Bài tập FlexiFit", date, durationMin:duration, totalCalo:calo, completionRatio:completion, muscleCalories, zones:[...new Set(rawZones)] });
   alert(`✅ Đã lưu!\n⏱️ ${duration} phút · 🔥 ${calo} kcal · ✅ ${completion}% hoàn thành`);
 });
 
@@ -1228,15 +1981,10 @@ document.getElementById("addSportBtn").addEventListener("click", () => {
   const type = document.getElementById("sportType").value;
   const mins = parseInt(document.getElementById("sportMinutes").value);
   const calo = calculateCalories(METS[type], appData.currentWeight, mins);
-  let rawGroups = sportMuscleMap[type] || ["Toàn thân"];
-  let expanded = [];
-  rawGroups.forEach(g => {
-    if (g === "Toàn thân") expanded.push("Chân-Mông","Core","Ngực-Vai-Tay","Lưng trên");
-    else expanded.push(g);
-  });
-  const muscleGroups = [...new Set(expanded)];
+  const muscleCalories = distributeSportCalories(type, calo);
+  MUSCLE_KEYS.forEach(m => muscleCalories[m] = Math.round(muscleCalories[m]));
   const date = document.getElementById("sportDate").value || new Date().toISOString().slice(0,10);
-  addSession({ type:"sport", activityName:SPORT_NAMES[type], date, durationMin:mins, totalCalo:calo, muscleGroups, completionRatio:100 });
+  addSession({ type:"sport", activityName:SPORT_NAMES[type], date, durationMin:mins, totalCalo:calo, muscleCalories, completionRatio:100 });
   alert(`✅ Đã thêm ${SPORT_NAMES[type]}\n⏱️ ${mins} phút · 🔥 ${calo} kcal`);
 });
 
@@ -1261,7 +2009,7 @@ function renderHistoryTab() {
   let html = "";
   [...appData.workoutSessions].reverse().forEach((session, idx) => {
     const originalIndex = appData.workoutSessions.length - 1 - idx;
-    const muscles = Array.isArray(session.muscleGroups) ? session.muscleGroups.join(", ") : "";
+    const muscles = Array.isArray(session.zones) ? session.zones.join(", ") : "";
     html += `<div class="history-item">
       <input type="checkbox" class="history-checkbox history-check" data-index="${originalIndex}">
       <div class="history-info">
