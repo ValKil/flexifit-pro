@@ -466,7 +466,8 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
 .muscle-card.compact { padding: 10px 12px; }
 .muscle-card.compact .muscle-card-name { font-size: 0.78rem; margin-bottom: 4px; }
 .muscle-card.compact .muscle-nums { font-size: 0.7rem; }
-
+.body-map-row { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin: 12px 0 20px; }
+.body-map-col { flex: 1 1 200px; max-width: 240px; }
 
 </style>
 </head>
@@ -577,64 +578,17 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
     <div class="body-map-row">
       <div class="body-map-col">
         <div class="section-label" style="text-align:center;">MẶT TRƯỚC</div>
-        <svg id="bodyFront" viewBox="0 0 200 340" class="body-svg">
-          <!-- outline -->
-          <circle cx="100" cy="28" r="22" class="body-outline"/>
-          <path d="M65,55 L135,55 L145,160 L55,160 Z" class="body-outline"/>
-          <rect x="38" y="60" width="20" height="95" rx="8" class="body-outline"/>
-          <rect x="142" y="60" width="20" height="95" rx="8" class="body-outline"/>
-          <rect x="68" y="160" width="64" height="150" rx="8" class="body-outline"/>
-
-          <!-- muscle regions -->
-          <rect x="78" y="56" width="44" height="10" class="muscle-region muscle-upper_trapezius"/>
-          <ellipse cx="58" cy="73" rx="15" ry="18" class="muscle-region muscle-front_deltoids"/>
-          <ellipse cx="142" cy="73" rx="15" ry="18" class="muscle-region muscle-front_deltoids"/>
-          <ellipse cx="46" cy="62" rx="8" ry="12" class="muscle-region muscle-side_deltoids"/>
-          <ellipse cx="154" cy="62" rx="8" ry="12" class="muscle-region muscle-side_deltoids"/>
-          <rect x="68" y="68" width="64" height="40" rx="8" class="muscle-region muscle-chest"/>
-          <rect x="42" y="95" width="16" height="45" rx="6" class="muscle-region muscle-biceps"/>
-          <rect x="142" y="95" width="16" height="45" rx="6" class="muscle-region muscle-biceps"/>
-          <rect x="40" y="145" width="16" height="40" rx="6" class="muscle-region muscle-forearms"/>
-          <rect x="144" y="145" width="16" height="40" rx="6" class="muscle-region muscle-forearms"/>
-          <rect x="78" y="110" width="44" height="55" rx="6" class="muscle-region muscle-abs"/>
-          <rect x="62" y="110" width="14" height="55" rx="4" class="muscle-region muscle-obliques"/>
-          <rect x="124" y="110" width="14" height="55" rx="4" class="muscle-region muscle-obliques"/>
-          <rect x="72" y="175" width="26" height="80" rx="6" class="muscle-region muscle-quadriceps"/>
-          <rect x="102" y="175" width="26" height="80" rx="6" class="muscle-region muscle-quadriceps"/>
-          <rect x="74" y="265" width="22" height="55" rx="6" class="muscle-region muscle-calves"/>
-          <rect x="104" y="265" width="22" height="55" rx="6" class="muscle-region muscle-calves"/>
-        </svg>
+        <div id="bodyFrontContainer" style="width:100%;max-width:220px;margin:0 auto;"></div>
       </div>
       <div class="body-map-col">
         <div class="section-label" style="text-align:center;">MẶT SAU</div>
-        <svg id="bodyBack" viewBox="0 0 200 340" class="body-svg">
-          <circle cx="100" cy="28" r="22" class="body-outline"/>
-          <path d="M65,55 L135,55 L145,160 L55,160 Z" class="body-outline"/>
-          <rect x="38" y="60" width="20" height="95" rx="8" class="body-outline"/>
-          <rect x="142" y="60" width="20" height="95" rx="8" class="body-outline"/>
-          <rect x="68" y="160" width="64" height="150" rx="8" class="body-outline"/>
-
-          <rect x="78" y="55" width="44" height="12" class="muscle-region muscle-upper_trapezius"/>
-          <ellipse cx="58" cy="73" rx="15" ry="18" class="muscle-region muscle-rear_deltoids"/>
-          <ellipse cx="142" cy="73" rx="15" ry="18" class="muscle-region muscle-rear_deltoids"/>
-          <rect x="68" y="68" width="64" height="48" rx="8" class="muscle-region muscle-lats_upper_back"/>
-          <rect x="42" y="95" width="16" height="45" rx="6" class="muscle-region muscle-triceps"/>
-          <rect x="142" y="95" width="16" height="45" rx="6" class="muscle-region muscle-triceps"/>
-          <rect x="40" y="145" width="16" height="40" rx="6" class="muscle-region muscle-forearms"/>
-          <rect x="144" y="145" width="16" height="40" rx="6" class="muscle-region muscle-forearms"/>
-          <rect x="76" y="118" width="48" height="40" rx="6" class="muscle-region muscle-lower_back"/>
-          <rect x="70" y="160" width="60" height="35" rx="10" class="muscle-region muscle-glutes"/>
-          <rect x="72" y="198" width="26" height="60" rx="6" class="muscle-region muscle-hamstrings"/>
-          <rect x="102" y="198" width="26" height="60" rx="6" class="muscle-region muscle-hamstrings"/>
-          <rect x="74" y="265" width="22" height="55" rx="6" class="muscle-region muscle-calves"/>
-          <rect x="104" y="265" width="22" height="55" rx="6" class="muscle-region muscle-calves"/>
-        </svg>
+        <div id="bodyBackContainer" style="width:100%;max-width:220px;margin:0 auto;"></div>
       </div>
     </div>
     <div class="muscle-grid" id="muscleStatsContainer"></div>
     <div class="muscle-formula">
       <strong>Công thức:</strong> Mục tiêu tuần (tổng) = cân nặng × K (4.5–6.0) × 7 ngày, hiệu chỉnh theo tuổi.
-      Mục tiêu mỗi nhóm cơ = Tổng × % phân bổ (16 nhóm, theo mẫu nam giới). Màu cơ thể: 🔴 thấp → 🟢 đạt/vượt mục tiêu.
+      Mục tiêu mỗi nhóm cơ = Tổng × % phân bổ (16 nhóm). Màu cơ thể: 🔴 thấp → 🟢 đạt/vượt mục tiêu.
     </div>
   </div>
 </div>
@@ -927,8 +881,8 @@ function updateMuscleStats() {
   // Cập nhật màu trên body map (cả mặt trước và sau)
   MUSCLE_KEYS.forEach(mg => {
     const color = percentToColor(percents[mg]);
-    document.querySelectorAll(`#bodyFront .muscle-${mg}, #bodyBack .muscle-${mg}`).forEach(el => {
-      el.style.fill = color;
+  window._lastMusclePercents = percents;
+  if (window.applyMuscleColors) window.applyMuscleColors(percents);
     });
   });
 
@@ -2161,5 +2115,66 @@ document.addEventListener("DOMContentLoaded", () => {
 
 loadAppData();
 </script>
+
+<script type="module">
+import { BodyChart, ViewSide } from 'https://esm.sh/body-muscles';
+
+const frontContainer = document.getElementById('bodyFrontContainer');
+const backContainer  = document.getElementById('bodyBackContainer');
+new BodyChart(frontContainer, { view: ViewSide.FRONT, bodyState: {} });
+new BodyChart(backContainer,  { view: ViewSide.BACK,  bodyState: {} });
+
+function labelsFor(mg) {
+  const map = {
+    chest:           s => [`${s} Upper Chest (Clavicular)`, `${s} Lower Chest (Sternal)`],
+    front_deltoids:  s => [`${s} Shoulder (Front)`],
+    side_deltoids:   s => [`${s} Shoulder (Side)`],
+    rear_deltoids:   s => [`${s} Rear Deltoid`],
+    upper_trapezius: s => [`${s} Trapezius (Upper)`, `${s} Trapezius (Mid)`, `${s} Trapezius (Lower)`],
+    biceps:          s => [`${s} Biceps`],
+    triceps:         s => [`${s} Triceps (Long Head)`, `${s} Triceps (Lateral Head)`],
+    forearms:        s => [`${s} Forearm`, `Forearm Flexors ${s}`, `Forearm Extensors ${s}`],
+    quadriceps:      s => [`${s} Quadriceps`],
+    hamstrings:      s => [`Medial Hamstrings (Semis) ${s}`, `Lateral Hamstrings (Biceps) ${s}`],
+    glutes:          s => [`Gluteus Medius ${s}`, `Gluteus Maximus ${s}`],
+    calves:          s => [`Gastrocnemius Medial ${s}`, `Gastrocnemius Lateral ${s}`, `Soleus ${s}`],
+    abs:             s => [`${s} Abs (Upper)`, `${s} Lower Abs`],
+    obliques:        s => [`${s} External Oblique`, `${s} Serratus Anterior`],
+    lower_back:      s => [`Erector Spinae ${s}`, `Quadratus Lumborum ${s}`],
+    lats_upper_back: s => [`${s} Lats (Upper)`, `${s} Lats (Mid)`, `${s} Lats (Lower)`]
+  };
+  let out = [];
+  ["Left","Right"].forEach(s => out.push(...map[mg](s)));
+  return out;
+}
+
+function percentToColorLocal(pct) {
+  pct = Math.max(0, Math.min(100, pct));
+  const hue = (pct / 100) * 120;
+  return `hsl(${hue}, 65%, 45%)`;
+}
+
+const MUSCLE_KEYS_LOCAL = ["chest","lats_upper_back","front_deltoids","side_deltoids","rear_deltoids",
+  "upper_trapezius","biceps","triceps","forearms","quadriceps","hamstrings","glutes",
+  "calves","abs","obliques","lower_back"];
+
+window.applyMuscleColors = function(percents) {
+  MUSCLE_KEYS_LOCAL.forEach(mg => {
+    const color = percentToColorLocal(percents[mg] || 0);
+    const labels = labelsFor(mg);
+    [frontContainer, backContainer].forEach(c => {
+      labels.forEach(label => {
+        c.querySelectorAll(`[aria-label="${label}"]`).forEach(el => {
+          el.style.fill = color;
+          el.style.fillOpacity = '0.85';
+        });
+      });
+    });
+  });
+};
+
+if (window._lastMusclePercents) window.applyMuscleColors(window._lastMusclePercents);
+</script>
+  
 </body>
 </html>
