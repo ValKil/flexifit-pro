@@ -1765,7 +1765,11 @@ function percentToColor(pct) {
   return `hsl(${hue}, 65%, 45%)`;
 }
   
-const ALL_MUSCLE_GROUPS = ["Chân-Mông", "Core", "Ngực-Vai-Tay", "Lưng trên", "Toàn thân"];
+const ALL_ZONES = ["lower_body","core","upper_body_push","upper_body_pull","cardio","all_body"];
+const ZONE_NAMES_VI = {
+  lower_body:"Chân-Mông", core:"Core", upper_body_push:"Ngực-Vai-Tay (Đẩy)",
+  upper_body_pull:"Lưng-Tay (Kéo)", cardio:"Cardio", all_body:"Toàn thân"
+};
 
 // ==================== SPORT DATA ====================
 const METS = {
@@ -1793,10 +1797,10 @@ function calculateCalories(met, weight, minutes) {
 }
 
 // ==================== WORKOUT GENERATION ====================
-function getAlternativeExercises(muscleGroup, currentName, kneeScore) {
+function getAlternativeExercises(zoneKey, currentName, kneeScore) {
   return Object.entries(exerciseLibrary)
     .filter(([key, ex]) =>
-      ex.muscleGroup === muscleGroup &&
+      ex.zone_key === zoneKey &&
       ex.name !== currentName &&
       key !== "warmup" && key !== "cooldown" &&
       !(ex.kneeRisk && kneeScore < 4)
@@ -1841,16 +1845,16 @@ function renderDetailedWorkout(exercises) {
   const totalMin = Math.round(exercises.reduce((s, e) => s + e.time, 0));
   let html = `<div class="workout-meta">⏱️ Tổng thời gian ước tính: <strong>${totalMin} phút</strong> · ${exercises.length} bài tập</div>`;
 
-  exercises.forEach((ex, idx) => {
-    const selectOptions = ALL_MUSCLE_GROUPS.map(mg =>
-      `<option value="${mg}" ${ex.muscleGroup === mg ? 'selected' : ''}>${mg}</option>`
+exercises.forEach((ex, idx) => {
+    const selectOptions = ALL_ZONES.map(z =>
+      `<option value="${z}" ${ex.zone_key === z ? 'selected' : ''}>${ZONE_NAMES_VI[z]}</option>`
     ).join('');
     html += `
     <div class="ex-card" id="ex-${idx}">
       <div class="ex-head">
         <div class="ex-name">${ex.name}</div>
         <div class="ex-controls">
-          <span class="tag accent">${ex.muscleGroup}</span>
+          <span class="tag accent">${ZONE_NAMES_VI[ex.zone_key]}</span>
           <select class="replace-select muscle-select-${idx}" data-idx="${idx}">${selectOptions}</select>
           <button class="btn btn-secondary btn-sm replace-ex-btn" data-idx="${idx}" style="margin-top:0;">🔄</button>
           <label class="done-label">
@@ -1903,11 +1907,11 @@ function handleReplaceClick(e) {
   const oldEx = currentExercises[idx];
   if (!oldEx) return;
   const selectEl = document.querySelector(`.muscle-select-${idx}`);
-  let targetMuscleGroup = oldEx.muscleGroup;
-  if (selectEl && selectEl.value) targetMuscleGroup = selectEl.value;
+  let targetZone = oldEx.zone_key;
+  if (selectEl && selectEl.value) targetZone = selectEl.value;
   const kneeScore = parseInt(document.getElementById("kneeStatus").value);
-  let alts = getAlternativeExercises(targetMuscleGroup, oldEx.name, kneeScore);
-  if (alts.length === 0) { alert(`Không tìm thấy bài thay thế trong nhóm "${targetMuscleGroup}".`); return; }
+  let alts = getAlternativeExercises(targetZone, oldEx.name, kneeScore);
+  if (alts.length === 0) { alert(`Không tìm thấy bài thay thế trong nhóm "${ZONE_NAMES_VI[targetZone]}".`); return; }
   const newEx = alts[Math.floor(Math.random() * alts.length)];
   currentExercises[idx] = newEx;
   const completionState = saveCompletionState();
